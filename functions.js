@@ -1,7 +1,7 @@
 import { randomInt } from 'crypto';
 
-const userCooldowns = {}; // Object to store the last response times for users
-const COOLDOWN_TIME = 10 * 60 * 1000; // 5 minutes in milliseconds
+const userCooldowns = {}; // Objet pour stocker le temps de cooldown pour les utilisateurs
+const COOLDOWN_TIME = 10 * 60 * 1000; // 5 minutes en millisecondes
 
 export const deleteEmptyWords = (words) => {
   words = words.filter((word) => {
@@ -10,7 +10,7 @@ export const deleteEmptyWords = (words) => {
   return words.reverse();
 };
 
-// CoolDown pour pas que le bot spam les quette et feur à la même personne
+// Cooldown pour pas que le bot spam les quette et feur à la même personne
 export const checkCooldown = (user) => {
   const now = Date.now();
   if (!userCooldowns[user]) {
@@ -37,8 +37,7 @@ export const checkForPourquoi = (client, channel, message, tags) => {
   ];
 
   if (replacedMessage.search('pourquoi') !== -1) {
-    let words = replacedMessage.split(' ');
-    words = deleteEmptyWords(words);
+    const words = deleteEmptyWords(replacedMessage.split(' '));
     if (words[0] === 'pourquoi') {
       if (!checkCooldown(tags.username)) {
         client.reply(channel, responsesPourquoi[randomInt(responsesPourquoi.length)], tags.id);
@@ -54,8 +53,7 @@ export const checkForQuoi = (client, channel, message, tags) => {
   const responsesQuoi = ['FEUR !!!!!', "Feur (coiffeur tu l'as ou pas ^^ ?)"];
 
   if (replacedMessage.search('quoi') !== -1) {
-    let words = replacedMessage.split(' ');
-    words = deleteEmptyWords(words);
+    const words = deleteEmptyWords(replacedMessage.split(' '));
     if (words[0] === 'quoi') {
       if (!checkCooldown(tags.username)) {
         client.reply(channel, responsesQuoi[randomInt(responsesQuoi.length)], tags.id);
@@ -68,7 +66,6 @@ export const checkForQuoi = (client, channel, message, tags) => {
 export const checkForQui = (client, channel, message, tags) => {
   const quiRegex = /\bqu?i+\b/g;
   const replacedMessage = message.replace(quiRegex, 'qui');
-
   const responsesQui = [
     'Quette ou bien kette tel est la question :thinking:',
     "C'est quette MonkeySpin",
@@ -76,8 +73,7 @@ export const checkForQui = (client, channel, message, tags) => {
   ];
 
   if (replacedMessage.search('qui') !== -1) {
-    let words = replacedMessage.split(' ');
-    words = deleteEmptyWords(words);
+    const words = deleteEmptyWords(replacedMessage.split(' '));
     if (words[0] === 'qui') {
       if (!checkCooldown(tags.username)) {
         client.reply(channel, responsesQui[randomInt(responsesQui.length)], tags.id);
