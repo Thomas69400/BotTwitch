@@ -12,8 +12,9 @@ Bot Twitch pour gérer des messages, des commandes
 ## Installation
 
 1. Lancer avec `nmp i` dans le terminal
-2. Commande `node start` pour démarrer l'application
-3. Stoper le serveur avec control+c
+2. Commande `npm run start` pour démarrer l'application
+3. Commande `npm run dev` pour démarrer l'application via Nodemon et coder plus facilement
+4. Stoper le serveur avec control+c
 
 ## Concepts
 
