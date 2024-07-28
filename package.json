@@ -16,7 +16,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "http": "^0.0.1-security",
-    "tmi.js": "^1.8.5",
+    "tmi.js": "^1.9.0-pre.1",
     "twurple": "^1.0.0"
   }
 }
