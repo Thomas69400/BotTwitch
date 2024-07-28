@@ -49,7 +49,7 @@ export const checkForPourquoi = (client, channel, message, tags) => {
 // Répondre FEUR après un 'quoi' en fin de phrase
 export const checkForQuoi = (client, channel, message, tags) => {
   const quoiRegex = /\bqu?o+i+\b/g;
-  const replacedMessage = message.replace(quoiRegex, 'pourquoi');
+  const replacedMessage = message.replace(quoiRegex, 'quoi');
   const responsesQuoi = ['FEUR !!!!!', "Feur (coiffeur tu l'as ou pas ^^ ?)"];
 
   if (replacedMessage.search('quoi') !== -1) {
