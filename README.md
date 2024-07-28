@@ -25,3 +25,9 @@ Bot Twitch pour gérer des messages, des commandes
 5. Voler/Enlever/Devenir vip
 6. Roulette de points (Ouverture avec une chance aléatoire de gagner pour doubler sa mise)
 7. Raffles
+
+## TODO List
+
+1. Faire des Tests...
+2. Voir la doc pour les points
+3. Voir pour mongoDb
