@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import http from 'http';
 import tmi from 'tmi.js';
-import route from './route.js';
 
 import { checkCooldown, checkForPourquoi, checkForQui, checkForQuoi } from './functions.js';
 
@@ -14,10 +13,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use('/', route);
-
 server.listen(PORT, () => {
-  console.log(`Serveur lancé sur le PORT ${PORT}`);
+  console.log(`Bot lancé sur le port: ${PORT}`);
 });
 
 const client = new tmi.Client({
