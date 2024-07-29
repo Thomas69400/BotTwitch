@@ -1,12 +1,17 @@
 import dotenv from 'dotenv';
 import tmi from 'tmi.js';
 
-import { checkCooldown, checkForPourquoi, checkForQui, checkForQuoi } from './functions/whoWhyWhat.js';
+import {
+  checkCooldown,
+  checkForPourquoi,
+  checkForQui,
+  checkForQuoi,
+} from './functions/whoWhyWhat.js';
 import { savePoints, addPoints, checkViewers } from './functions/points.js';
 
 dotenv.config();
 
-// init
+// Initialisation
 const client = new tmi.Client({
   options: { debug: true },
   identity: {
@@ -21,10 +26,10 @@ client.connect().catch(console.error);
 const onlyLetter = /[^a-z\s]/g;
 
 client.on('message', (channel, tags, message, self) => {
-  // Ne répond pas à soit-même
+  // Le bot ne répond pas à lui-même
   if (self) return;
 
-  // Si le spectateur n'est pas déjà suivi, l'ajouter
+  // Si le spectateur n'est pas déjà suivi par le systeme de point, l'ajoute
   checkViewers(tags);
 
   // Supprime tout les caractères spéciaux
@@ -37,8 +42,8 @@ client.on('message', (channel, tags, message, self) => {
   checkForQui(client, channel, trunkMessage, tags);
 });
 
-// Ajouter des points toutes les 5 minutes
+// Ajouter des points selon un interval régulié
 setInterval(addPoints, process.env.TIMER_ADD_POINTS);
 
-// Sauvegarder les points toutes les heures
+// Sauvegarder les points selon un interval régulié
 setInterval(savePoints, process.env.SAVA_POINTS);
