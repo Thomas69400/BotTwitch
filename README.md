@@ -1,8 +1,8 @@
 # Bot Twitch
 
-## DESCRIPTION
+## Description
 
-Bot Twitch pour gérer des messages, des commandes
+Bot Twitch pour gérer des messages, des commandes et un systeme de points avancé
 
 ## Fonctionnalités
 
@@ -37,13 +37,13 @@ SAVE_POINTS = 10000
 
 ## Concepts
 
-1. Tous les mecs d'une couleur aléatoire qui appartient à twitch (ex : rouge) sont timeout 60 secondes(au pif) --> perdes des points (quand y'en aura)
-2. Même chose qu'au dessus avec les badges
-3. Timeout des gens contre des points
-4. Voler des points aux autres / Payer pour faire perdre (payer plus que la cible n'en perde)
-5. Voler/Enlever/Devenir vip
-6. Roulette de points (Ouverture avec une chance aléatoire de gagner pour doubler sa mise)
-7. Raffles
+- Tous les mecs d'une couleur aléatoire qui appartient à twitch (ex : rouge) sont timeout 60 secondes(au pif) --> perdes des points (quand y'en aura)
+- Même chose qu'au dessus avec les badges
+- Timeout des gens contre des points
+- Voler des points aux autres / Payer pour faire perdre (payer plus que la cible n'en perde)
+- Voler/Enlever/Devenir vip
+- Roulette de points (Ouverture avec une chance aléatoire de gagner pour doubler sa mise)
+- Raffles
 
 ## TODO List
 
