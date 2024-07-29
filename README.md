@@ -31,3 +31,4 @@ Bot Twitch pour gérer des messages, des commandes
 1. Faire des Tests...
 2. Voir la doc pour les points
 3. Voir pour mongoDb
+4. Tout changer en TS
