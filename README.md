@@ -15,8 +15,8 @@ Bot Twitch pour gérer des messages, des commandes et un systeme de points avanc
 2. Créer un fichier .env avec les données suivantes :
 
 ```ruby
-CLIENTID = x # L'id Client (aucune idée d'où la trouver)
-SECRET = x # Le Secret (aucune idée d'où le trouver)
+CLIENTID = x # L'id Client (dev.twitch.tv)
+SECRET = x # Le Secret (dev.twitch.tv)
 TOKEN_OAUTH = x # token récupéré via l'oauth Twitch
 CHANNEL = x  # la chaine twitch ou le bot va
 
