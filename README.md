@@ -12,9 +12,28 @@ Bot Twitch pour gérer des messages, des commandes
 ## Installation
 
 1. Lancer avec `nmp i` dans le terminal
-2. Commande `npm run start` pour démarrer l'application
-3. Commande `npm run dev` pour démarrer l'application via Nodemon et coder plus facilement
-4. Stoper le serveur avec control+c
+2. Créer un fichier .env avec les données suivantes :
+
+```ruby
+CLIENTID = x # L'id Client (aucune idée d'où la trouver)
+SECRET = x # Le Secret (aucune idée d'où le trouver)
+TOKEN_OAUTH = x # token récupéré via l'oauth Twitch
+CHANNEL = x  # la chaine twitch ou le bot va
+
+# Timers: valeur en millisecondes
+TIMER_ADD_POINTS = 10000
+SAVE_POINTS = 10000
+```
+
+3. Créer un fichier "points.json" avec les données suivantes :
+
+```json
+{}
+```
+
+4. Commande `npm run start` pour démarrer l'application
+5. Commande `npm run dev` pour démarrer l'application via Nodemon et coder plus facilement
+6. Stoper le serveur avec Control + C
 
 ## Concepts
 

@@ -17,7 +17,7 @@ const client = new tmi.Client({
   options: { debug: true },
   identity: {
     username: 'LytchiBot',
-    password: process.env.TOKEN,
+    password: process.env.TOKEN_OAUTH,
   },
   channels: [process.env.CHANNEL],
 });
