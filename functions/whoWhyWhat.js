@@ -70,6 +70,7 @@ export const checkForQui = (client, channel, message, tags) => {
     'Quette ou bien kette tel est la question :thinking:',
     "C'est quette MonkeySpin",
     "Quette (quiquette tu l'as ou pas ^^ ?)",
+    "Feur aussi. Parce qu'en fait ça fait quifeur (kiffeur). Nerdge"
   ];
 
   if (replacedMessage.search('qui') !== -1) {
