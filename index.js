@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import tmi from 'tmi.js';
 
 import { checkCooldown, checkForPourquoi, checkForQui, checkForQuoi } from './functions.js';
+import {savePoints, addPoints, checkViewers} from './points.js';
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ const onlyLetter = /[^a-z\s]/g;
 client.on('message', (channel, tags, message, self) => {
   // Ne répond pas à soit-même
   if (self) return;
+  // Si le spectateur n'est pas déjà suivi, l'ajouter
+  checkViewers(tags);
 
   // Supprime tout les caractères spéciaux
   const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
@@ -32,3 +35,9 @@ client.on('message', (channel, tags, message, self) => {
   checkForQuoi(client, channel, trunkMessage, tags);
   checkForQui(client, channel, trunkMessage, tags);
 });
+
+// Ajouter des points toutes les 5 minutes
+setInterval(addPoints, 5 * 60 * 1000);
+
+// Sauvegarder les points toutes les heures
+setInterval(savePoints, 60 * 60 * 1000);
