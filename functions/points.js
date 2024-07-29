@@ -1,13 +1,12 @@
 import fs from 'fs';
 
 let viewers = {};
+
 // Charger les points lors du démarrage
 fs.readFile('points.json', 'utf8', (err, data) => {
   if (err) {
     if (err.code === 'ENOENT') {
-      // Le fichier n'existe pas, initialiser viewers à un objet vide
       console.log('Aucun fichier de points trouvé, initialisation à un objet vide.');
-      viewers = {};
     } else {
       console.error('Erreur lors du chargement des points:', err);
     }
@@ -17,7 +16,6 @@ fs.readFile('points.json', 'utf8', (err, data) => {
       console.log('Points chargés');
     } catch (jsonErr) {
       console.error("Erreur lors de l'analyse du fichier JSON:", jsonErr);
-      viewers = {}; // Initialiser à un objet vide en cas d'erreur d'analyse
     }
   }
 });
