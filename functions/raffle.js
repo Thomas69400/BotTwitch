@@ -1,27 +1,27 @@
 import { isOnLive } from '../auth.js';
 import { shuffleArray, sleep, checkRole } from './utils.js';
+import { addPoints } from './points.js';
 
 const regexRaffle = /^!raffle/;
 let raffleStatus = false;
 let listViewersJoined = [];
+const messageRaffleStarted = 'Un raffle est en cours ! Tapez !join pour rejoindre !';
+const messageRaffleCancel = 'Le raffle a été annulé';
 
 // Commencer un raffle
-export const startRaffle = async (tag, message) => {
+export const startRaffle = async (client, tag, message) => {
   //if (isOnLive() != 0) return;
   if (checkRole(tag) > 0) {
     raffleStatus = true;
     listViewersJoined = [];
-    const winAmount = message.replace(regexRaffle, '').replaceAll(' ', '');
+    client.say(process.env.CHANNEL, messageRaffleStarted);
     await sleep(5000); // TODO mettre pour attendre 30 secondes
     if (!raffleStatus) return;
     raffleStatus = false;
     listViewersJoined = shuffleArray(listViewersJoined);
-    for (
-      let i = 0;
-      i < Math.round((listViewersJoined.length * process.env.RAFFLE_WIN_RATIO) / 100);
-      i++
-    ) {}
-    const winners = [];
+    const ratioWinner = Math.round((listViewersJoined.length * process.env.RAFFLE_WIN_RATIO) / 100);
+    const winAmount = message.replace(regexRaffle, '').replaceAll(' ', '') / ratioWinner;
+    addPoints(listViewersJoined.slice(0, ratioWinner), winAmount);
   }
 };
 
@@ -32,8 +32,9 @@ export const joinRaffle = (tag) => {
 };
 
 // Annule un raffle en cours
-export const cancelRaffle = (tag) => {
+export const cancelRaffle = (client, tag) => {
   if (checkRole(tag) > 0) {
+    client.say(process.env.CHANNEL, messageRaffleCancel);
     raffleStatus = false;
     return raffleStatus;
   }
