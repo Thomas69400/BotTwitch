@@ -7,7 +7,7 @@ import {
   checkForQui,
   checkForQuoi,
 } from './functions/whoWhyWhat.js';
-import { savePoints, addPoints, checkViewers } from './functions/points.js';
+import { savePoints, activeRevenue, checkViewers } from './functions/points.js';
 import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
 
 dotenv.config();
@@ -35,8 +35,8 @@ client.on('message', async (channel, tags, message, self) => {
   // Supprime tout les caractères spéciaux
   const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
   // Lorsqu'une personne écrit !raffle
-  if (message.startsWith('!raffle')) await startRaffle(tags, message.toLowerCase());
-  if (message.startsWith('!cancel')) cancelRaffle(tags);
+  if (message.startsWith('!raffle')) await startRaffle(client, tags, message.toLowerCase());
+  if (message.startsWith('!cancel')) cancelRaffle(client, tags);
   if (message.startsWith('!join')) joinRaffle(tags);
   checkCooldown();
 
@@ -46,7 +46,7 @@ client.on('message', async (channel, tags, message, self) => {
 });
 
 // Ajouter des points selon un interval régulié
-setInterval(addPoints, process.env.TIMER_ADD_POINTS);
+setInterval(activeRevenue, process.env.TIMER_ADD_POINTS);
 
 // Sauvegarder les points selon un interval régulié
 setInterval(savePoints, process.env.SAVE_POINTS);
