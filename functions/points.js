@@ -13,7 +13,6 @@ fs.readFile('points.json', 'utf8', (err, data) => {
   } else {
     try {
       viewers = JSON.parse(data);
-      console.log('Points chargés');
     } catch (jsonErr) {
       console.error("Erreur lors de l'analyse du fichier JSON:", jsonErr);
     }

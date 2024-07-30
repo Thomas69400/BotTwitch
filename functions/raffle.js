@@ -49,3 +49,19 @@ export const cancelRaffle = (client, tag) => {
     return raffleStatus;
   }
 };
+
+export const resetViewersRaffleInfo = () => {
+  viewersRaffleInfo = [];
+};
+
+export const resetRaffleStatus = () => {
+  raffleStatus = false;
+};
+
+export const getViewersRaffleInfo = () => {
+  return viewersRaffleInfo;
+};
+
+export const getRaffleStatus = () => {
+  return raffleStatus;
+};

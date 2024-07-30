@@ -43,7 +43,6 @@ SAVE_POINTS = 10000
 - Voler des points aux autres / Payer pour faire perdre (payer plus que la cible n'en perde)
 - Voler/Enlever/Devenir vip
 - Roulette de points (Ouverture avec une chance aléatoire de gagner pour doubler sa mise)
-- Raffles
 
 ## TODO List
 
