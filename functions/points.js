@@ -1,3 +1,4 @@
+import { log } from 'console';
 import fs from 'fs';
 
 let viewers = {};
@@ -49,11 +50,17 @@ export const activeRevenue = () => {
 };
 
 // Ajouter des points
-export const addPoints = (ids, points) => {
-  ids.forEach((id) => {
-    viewers[id] = {
-      ...viewers[id],
-      points: points + viewers[id].points,
+/**
+ *
+ * @param {Tableau d'objet} winners
+ * @param {string} points
+ */
+export const addPoints = (winners, points) => {
+  winners.forEach((winner) => {
+    const oldData = viewers[winner.id];
+    viewers[winner.id] = {
+      ...oldData,
+      points: points + oldData.points,
     };
   });
 };
