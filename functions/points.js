@@ -24,6 +24,7 @@ fs.readFile('points.json', 'utf8', (err, data) => {
 export const checkViewers = (tags) => {
   if (!viewers[tags['user-id']]) {
     viewers[tags['user-id']] = {
+      name: viewers[tags.username],
       points: 0,
       lastActive: new Date(),
     };
@@ -34,7 +35,7 @@ export const checkViewers = (tags) => {
 };
 
 // Ajoute des points aux viewers qui ont parlé dans les 5 dernières minutes
-export const addPoints = () => {
+export const activeRevenue = () => {
   const now = new Date();
 
   for (const [data] of Object.entries(viewers)) {
@@ -47,10 +48,19 @@ export const addPoints = () => {
   }
 };
 
+// Ajouter des points
+export const addPoints = (ids, points) => {
+  ids.forEach((id) => {
+    viewers[id] = {
+      ...viewers[id],
+      points: points + viewers[id].points,
+    };
+  });
+};
+
 // Sauvegarder les points dans un fichier
 export const savePoints = () => {
   fs.writeFile('points.json', JSON.stringify(viewers, null, 2), (err) => {
     if (err) console.error('Erreur lors de la sauvegarde des points:', err);
-    else console.log('Points sauvegardés');
   });
 };
