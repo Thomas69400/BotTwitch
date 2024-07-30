@@ -25,10 +25,8 @@ client.connect().catch(console.error);
 
 // Regex
 const onlyLetter = /[^a-z\s]/g;
-let raffleStatus = false;
-let listViewersJoined = [];
 
-client.on('message', (channel, tags, message, self) => {
+client.on('message', async (channel, tags, message, self) => {
   // Le bot ne répond pas à lui-même
   if (self) return;
 
@@ -36,14 +34,10 @@ client.on('message', (channel, tags, message, self) => {
   checkViewers(tags);
   // Supprime tout les caractères spéciaux
   const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
-  if (message.startsWith('!raffle')) {
-    const data = startRaffle(tags, message.toLowerCase(), raffleStatus);
-    console.log(data['raffleStatus']);
-  }
-  if (message.startsWith('!cancel')) raffleStatus = cancelRaffle(tags, raffleStatus);
-  if (message.startsWith('!join') && raffleStatus) {
-    joinRaffle(tags, message.toLowerCase());
-  }
+  // Lorsqu'une personne écrit !raffle
+  if (message.startsWith('!raffle')) await startRaffle(tags, message.toLowerCase());
+  if (message.startsWith('!cancel')) cancelRaffle(tags);
+  if (message.startsWith('!join')) joinRaffle(tags);
   checkCooldown();
 
   checkForPourquoi(client, channel, trunkMessage, tags);
