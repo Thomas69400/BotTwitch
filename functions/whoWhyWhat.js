@@ -39,9 +39,7 @@ export const checkForPourquoi = (client, channel, message, tags) => {
   if (replacedMessage.search('pourquoi') !== -1) {
     const words = deleteEmptyWords(replacedMessage.split(' '));
     if (words[0] === 'pourquoi') {
-      if (!checkCooldown(tags.username)) {
-        client.reply(channel, responsesPourquoi[randomInt(responsesPourquoi.length)], tags.id);
-      }
+      client.reply(channel, responsesPourquoi[randomInt(responsesPourquoi.length)], tags.id);
     }
   }
 };
@@ -55,9 +53,7 @@ export const checkForQuoi = (client, channel, message, tags) => {
   if (replacedMessage.search('quoi') !== -1) {
     const words = deleteEmptyWords(replacedMessage.split(' '));
     if (words[0] === 'quoi') {
-      if (!checkCooldown(tags.username)) {
-        client.reply(channel, responsesQuoi[randomInt(responsesQuoi.length)], tags.id);
-      }
+      client.reply(channel, responsesQuoi[randomInt(responsesQuoi.length)], tags.id);
     }
   }
 };
@@ -70,15 +66,13 @@ export const checkForQui = (client, channel, message, tags) => {
     'Quette ou bien kette tel est la question :thinking:',
     "C'est quette MonkeySpin",
     "Quette (quiquette tu l'as ou pas ^^ ?)",
-    "Feur aussi. Parce qu'en fait ça fait quifeur (kiffeur). Nerdge"
+    "Feur aussi. Parce qu'en fait ça fait quifeur (kiffeur). Nerdge",
   ];
 
   if (replacedMessage.search('qui') !== -1) {
     const words = deleteEmptyWords(replacedMessage.split(' '));
     if (words[0] === 'qui') {
-      if (!checkCooldown(tags.username)) {
-        client.reply(channel, responsesQui[randomInt(responsesQui.length)], tags.id);
-      }
+      client.reply(channel, responsesQui[randomInt(responsesQui.length)], tags.id);
     }
   }
 };

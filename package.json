@@ -15,9 +15,6 @@
   "author": "Tryllogy",
   "license": "ISC",
   "type": "module",
-  "jest": {
-    "testEnvironment": "node"
-  },
   "dependencies": {
     "@twurple/auth": "^7.1.0",
     "axios": "^1.7.2",
@@ -26,7 +23,11 @@
     "twurple": "^1.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.24.7",
+    "@babel/preset-env": "^7.25.2",
+    "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "ts-jest": "^29.2.3"
   }
 }

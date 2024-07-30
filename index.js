@@ -38,11 +38,12 @@ client.on('message', async (channel, tags, message, self) => {
   if (message.startsWith('!raffle')) await startRaffle(client, tags, message.toLowerCase());
   if (message.startsWith('!cancel')) cancelRaffle(client, tags);
   if (message.startsWith('!join')) joinRaffle(tags);
-  checkCooldown();
 
-  checkForPourquoi(client, channel, trunkMessage, tags);
-  checkForQuoi(client, channel, trunkMessage, tags);
-  checkForQui(client, channel, trunkMessage, tags);
+  if (!checkCooldown(tags['user-id'])) {
+    checkForPourquoi(client, channel, trunkMessage, tags);
+    checkForQuoi(client, channel, trunkMessage, tags);
+    checkForQui(client, channel, trunkMessage, tags);
+  }
 });
 
 // Ajouter des points selon un interval régulié
