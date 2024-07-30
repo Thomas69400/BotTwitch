@@ -48,6 +48,3 @@ client.on('message', async (channel, tags, message, self) => {
 
 // Ajouter des points selon un interval régulié
 setInterval(activeRevenue, process.env.TIMER_ADD_POINTS);
-
-// Sauvegarder les points selon un interval régulié
-setInterval(savePoints, process.env.SAVE_POINTS);

@@ -1,4 +1,3 @@
-import { log } from 'console';
 import fs from 'fs';
 
 let viewers = {};
@@ -25,7 +24,7 @@ fs.readFile('points.json', 'utf8', (err, data) => {
 export const checkViewers = (tags) => {
   if (!viewers[tags['user-id']]) {
     viewers[tags['user-id']] = {
-      name: viewers[tags.username],
+      name: tags.username,
       points: 0,
       lastActive: new Date(),
     };
@@ -47,6 +46,7 @@ export const activeRevenue = () => {
       data.points += 10; // Par exemple, 10 points toutes les 5 minutes
     }
   }
+  savePoints();
 };
 
 // Ajouter des points
@@ -63,6 +63,7 @@ export const addPoints = (winners, points) => {
       points: points + oldData.points,
     };
   });
+  savePoints();
 };
 
 // Sauvegarder les points dans un fichier
