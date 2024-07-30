@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node index.js",
     "dev": "nodemon index.js --ignore points.json"
   },
@@ -15,6 +15,9 @@
   "author": "Tryllogy",
   "license": "ISC",
   "type": "module",
+  "jest": {
+    "testEnvironment": "node"
+  },
   "dependencies": {
     "@twurple/auth": "^7.1.0",
     "axios": "^1.7.2",
@@ -23,6 +26,7 @@
     "twurple": "^1.0.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.1.4"
   }
 }
