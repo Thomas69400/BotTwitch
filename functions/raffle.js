@@ -8,8 +8,9 @@ let viewersRaffleInfo = [];
 const messageRaffleCancel = 'Le raffle a été annulé';
 
 // Commencer un raffle
+// TODO si personne rejoint le raffle alors message "personne a rejoint"
 export const startRaffle = async (client, tag, message) => {
-  //if (isOnLive() != 0) return;
+  if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
   if (checkRole(tag) > 0) {
     raffleStatus = true;
     viewersRaffleInfo = [];
@@ -18,7 +19,7 @@ export const startRaffle = async (client, tag, message) => {
       process.env.CHANNEL,
       `Un raffle de ${amount} est en cours ! Tapez !join pour rejoindre !`,
     );
-    await sleep(10000); // TODO mettre pour attendre 30 secondes
+    await sleep(process.env.TIMER_RAFFLE);
     if (!raffleStatus) return;
     raffleStatus = false;
     viewersRaffleInfo = shuffleArray(viewersRaffleInfo);

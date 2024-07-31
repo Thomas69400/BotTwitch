@@ -25,6 +25,10 @@ CHANNEL = x  # la chaîne twitch ou le bot va
 # Timers: valeur en millisecondes
 TIMER_ADD_POINTS = 10000
 SAVE_POINTS = 10000
+
+RAFFLE_WIN_RATIO =
+BROADCASTER_ID = 644753700
+BOT_ID = 1119604558
 ```
 
 .env.development
@@ -32,6 +36,7 @@ SAVE_POINTS = 10000
 ```ruby
 LIVE_REQUIERED = false
 POINTS_JSON = points.dev.json
+TIMER_RAFFLE =
 ```
 
 .env.production
@@ -39,6 +44,7 @@ POINTS_JSON = points.dev.json
 ```ruby
 LIVE_REQUIERED = true
 POINTS_JSON = points.json
+TIMER_RAFFLE =
 ```
 
 .env.test
@@ -46,6 +52,7 @@ POINTS_JSON = points.json
 ```ruby
 LIVE_REQUIERED = false
 POINTS_JSON = points.test.json
+TIMER_RAFFLE =
 ```
 
 3. Créer les fichiers "points.json", "points.dev.json" et "points.test.json" avec les données suivantes :
