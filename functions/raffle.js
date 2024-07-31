@@ -1,5 +1,5 @@
-import { isOnLive } from '../auth.js';
-import { shuffleArray, sleep, checkRole } from './utils.js';
+import { isNotOnLive } from '../auth.js';
+import { shuffleArray, sleep, checkRole, toBoolean } from './utils.js';
 import { addPoints } from './points.js';
 
 const regexRaffle = /^!raffle/;
@@ -9,7 +9,7 @@ const messageRaffleCancel = 'Le raffle a été annulé';
 
 // Commencer un raffle
 export const startRaffle = async (client, tag, message) => {
-  //if (isOnLive() != 0) return;
+  if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
   if (checkRole(tag) > 0) {
     raffleStatus = true;
     viewersRaffleInfo = [];

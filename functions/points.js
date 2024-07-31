@@ -1,4 +1,6 @@
 import fs from 'fs';
+import { isNotOnLive } from '../auth.js';
+import { toBoolean } from './utils.js';
 
 let viewers = {};
 
@@ -42,7 +44,9 @@ export const checkViewers = (tags) => {
 };
 
 // Ajoute des points aux viewers qui ont parlé dans les 5 dernières minutes
-export const activeRevenue = () => {
+export const activeRevenue = async () => {
+  if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
+
   const now = new Date();
 
   for (const [key, data] of Object.entries(viewers)) {
@@ -75,7 +79,7 @@ export const addPoints = (winners, points) => {
 
 // Sauvegarder les points dans un fichier
 export const savePoints = () => {
-  fs.writeFile('points.json', JSON.stringify(viewers, null, 2), (err) => {
+  fs.writeFile(process.env.POINTS_JSON, JSON.stringify(viewers, null, 2), (err) => {
     if (err) console.error('Erreur lors de la sauvegarde des points:', err);
   });
 };

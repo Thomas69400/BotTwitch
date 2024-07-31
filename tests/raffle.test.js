@@ -3,15 +3,13 @@ import {
   startRaffle,
   joinRaffle,
   cancelRaffle,
-  viewersRaffleInfo,
   resetViewersRaffleInfo,
   resetRaffleStatus,
   getViewersRaffleInfo,
   getRaffleStatus,
 } from '../functions/raffle';
-import { shuffleArray, sleep, checkRole } from '../functions/utils';
+import { shuffleArray, checkRole } from '../functions/utils';
 import { addPoints } from '../functions/points';
-import { isOnLive } from '../auth';
 
 jest.mock('../functions/utils');
 jest.mock('../functions/points');

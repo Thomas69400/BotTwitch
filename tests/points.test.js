@@ -83,7 +83,7 @@ describe('Tests pour les fonctions de points', () => {
     savePoints();
 
     expect(fs.writeFile).toHaveBeenCalledWith(
-      'points.json',
+      process.env.POINTS_JSON,
       JSON.stringify(viewers, null, 2),
       expect.any(Function),
     );

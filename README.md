@@ -12,7 +12,9 @@ Bot Twitch pour gérer des messages, des commandes et un système de points avan
 ## Installation
 
 1. Lancer avec `npm i` dans le terminal
-2. Créer un fichier .env avec les données suivantes :
+2. Créer les fichiers .env avec les données suivantes :
+
+.env :
 
 ```ruby
 CLIENTID = x # L'id Client (dev.twitch.tv)
@@ -25,7 +27,28 @@ TIMER_ADD_POINTS = 10000
 SAVE_POINTS = 10000
 ```
 
-3. Créer un fichier "points.json" avec les données suivantes :
+.env.development
+
+```ruby
+LIVE_REQUIERED = false
+POINTS_JSON = points.dev.json
+```
+
+.env.production
+
+```ruby
+LIVE_REQUIERED = true
+POINTS_JSON = points.json
+```
+
+.env.test
+
+```ruby
+LIVE_REQUIERED = false
+POINTS_JSON = points.test.json
+```
+
+3. Créer les fichiers "points.json", "points.dev.json" et "points.test.json" avec les données suivantes :
 
 ```json
 {}
@@ -50,3 +73,4 @@ SAVE_POINTS = 10000
 2. Voir la doc pour les points
 3. Voir pour mongoDb
 4. Tout changer en TS
+5. Revoir les tests
