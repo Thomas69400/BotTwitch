@@ -12,6 +12,7 @@ import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
 import { timeout } from './functions/timeout.js';
 
 dotenv.config();
+dotenv.config({ path: process.env.CONFIG_PATH });
 
 // Initialisation
 const client = new tmi.Client({

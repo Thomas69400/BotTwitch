@@ -15,3 +15,7 @@ export const checkRole = (tags) => {
   else if (tags['mod'] === true) return 1;
   else return 0;
 };
+
+export const toBoolean = (value) => {
+  return value === 'true';
+};

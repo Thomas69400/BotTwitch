@@ -19,15 +19,15 @@ export const getAccessToken = async () => {
   }
 };
 
-export const isOnLive = async () => {
+export const isNotOnLive = async () => {
   const accesToken = await getAccessToken();
   const url = `https://api.twitch.tv/helix/streams?user_login=${process.env.CHANNEL}`;
   const headers = { Authorization: `Bearer ${accesToken}`, 'Client-Id': process.env.CLIENTID };
 
   try {
     const response = await axios.get(url, { headers });
-    return response.data.data.length !== 0;
+    return response.data.data.length === 0;
   } catch (error) {
-    console.error('Error dans isOnLive:', error);
+    console.error('Error dans isNotOnLive:', error);
   }
 };

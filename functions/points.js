@@ -1,4 +1,6 @@
 import fs from 'fs';
+import { isNotOnLive } from '../auth.js';
+import { toBoolean } from './utils.js';
 
 let viewers = {};
 
@@ -19,6 +21,14 @@ fs.readFile('points.json', 'utf8', (err, data) => {
   }
 });
 
+export const getViewers = () => {
+  return viewers;
+};
+
+export const resetViewers = () => {
+  viewers = {};
+};
+
 // Regarde si un viewer existe sinon lui attribue une Date lastActive
 export const checkViewers = (tags) => {
   if (!viewers[tags['user-id']]) {
@@ -34,11 +44,13 @@ export const checkViewers = (tags) => {
 };
 
 // Ajoute des points aux viewers qui ont parlé dans les 5 dernières minutes
-export const activeRevenue = () => {
+export const activeRevenue = async () => {
+  if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
+
   const now = new Date();
 
-  for (const [data] of Object.entries(viewers)) {
-    const timeDiff = (now - data.lastActive) / 1000 / 60; // Temps en minutes
+  for (const [key, data] of Object.entries(viewers)) {
+    const timeDiff = (now - new Date(data.lastActive)) / 1000 / 60; // Temps en minutes
 
     // Si le spectateur a été actif dans les 5 dernières minutes
     if (timeDiff < 5) {
@@ -67,7 +79,7 @@ export const addPoints = (winners, points) => {
 
 // Sauvegarder les points dans un fichier
 export const savePoints = () => {
-  fs.writeFile('points.json', JSON.stringify(viewers, null, 2), (err) => {
+  fs.writeFile(process.env.POINTS_JSON, JSON.stringify(viewers, null, 2), (err) => {
     if (err) console.error('Erreur lors de la sauvegarde des points:', err);
   });
 };
