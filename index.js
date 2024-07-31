@@ -7,7 +7,7 @@ import {
   checkForQui,
   checkForQuoi,
 } from './functions/whoWhyWhat.js';
-import { savePoints, activeRevenue, checkViewers } from './functions/points.js';
+import { activeRevenue, checkViewers } from './functions/points.js';
 import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
 
 dotenv.config();
