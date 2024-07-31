@@ -19,6 +19,14 @@ fs.readFile('points.json', 'utf8', (err, data) => {
   }
 });
 
+export const getViewers = () => {
+  return viewers;
+};
+
+export const resetViewers = () => {
+  viewers = {};
+};
+
 // Regarde si un viewer existe sinon lui attribue une Date lastActive
 export const checkViewers = (tags) => {
   if (!viewers[tags['user-id']]) {
@@ -37,8 +45,8 @@ export const checkViewers = (tags) => {
 export const activeRevenue = () => {
   const now = new Date();
 
-  for (const [data] of Object.entries(viewers)) {
-    const timeDiff = (now - data.lastActive) / 1000 / 60; // Temps en minutes
+  for (const [key, data] of Object.entries(viewers)) {
+    const timeDiff = (now - new Date(data.lastActive)) / 1000 / 60; // Temps en minutes
 
     // Si le spectateur a été actif dans les 5 dernières minutes
     if (timeDiff < 5) {
