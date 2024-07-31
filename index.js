@@ -7,8 +7,9 @@ import {
   checkForQui,
   checkForQuoi,
 } from './functions/whoWhyWhat.js';
-import { savePoints, activeRevenue, checkViewers } from './functions/points.js';
+import { activeRevenue, checkViewers } from './functions/points.js';
 import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
+import { timeout } from './functions/timeout.js';
 
 dotenv.config();
 
@@ -29,7 +30,6 @@ const onlyLetter = /[^a-z\s]/g;
 client.on('message', async (channel, tags, message, self) => {
   // Le bot ne répond pas à lui-même
   if (self) return;
-
   // Si le spectateur n'est pas déjà suivi par le systeme de point, l'ajoute
   checkViewers(tags);
   // Supprime tout les caractères spéciaux
@@ -38,6 +38,8 @@ client.on('message', async (channel, tags, message, self) => {
   if (message.startsWith('!raffle')) await startRaffle(client, tags, message.toLowerCase());
   if (message.startsWith('!cancel')) cancelRaffle(client, tags);
   if (message.startsWith('!join')) joinRaffle(tags);
+
+  if (message.startsWith('!timeout')) timeout(client, channel, tags, message.toLowerCase());
 
   if (!checkCooldown(tags['user-id'])) {
     checkForPourquoi(client, channel, trunkMessage, tags);

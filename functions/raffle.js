@@ -8,9 +8,9 @@ let viewersRaffleInfo = [];
 const messageRaffleCancel = 'Le raffle a été annulé';
 
 // Commencer un raffle
-export const startRaffle = async (client, tag, message) => {
+export const startRaffle = async (client, tags, message) => {
   //if (isOnLive() != 0) return;
-  if (checkRole(tag) > 0) {
+  if (checkRole(tags) > 0) {
     raffleStatus = true;
     viewersRaffleInfo = [];
     const amount = message.replace(regexRaffle, '').replaceAll(' ', '');
@@ -42,8 +42,8 @@ export const joinRaffle = (tags) => {
 };
 
 // Annule un raffle en cours
-export const cancelRaffle = (client, tag) => {
-  if (checkRole(tag) > 0) {
+export const cancelRaffle = (client, tags) => {
+  if (checkRole(tags) > 0) {
     client.say(process.env.CHANNEL, messageRaffleCancel);
     raffleStatus = false;
     return raffleStatus;

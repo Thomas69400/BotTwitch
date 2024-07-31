@@ -71,3 +71,25 @@ export const savePoints = () => {
     if (err) console.error('Erreur lors de la sauvegarde des points:', err);
   });
 };
+
+/**
+ * Retourne un viewer avec ses points grâce à son tag
+ * @param {Object} tags
+ * @returns viewer
+ */
+export const getSpecificViewers = (tags) => {
+  return viewers[tags['user-id']];
+};
+
+/**
+ * Retourne un viewer avec ses points grâce à son nom
+ * @param {string} name
+ * @returns viewer
+ */
+export const getSpecificViewersByName = (name) => {
+  for (const id in viewers) {
+    if (viewers[id].name === name) {
+      return viewers[id];
+    }
+  }
+};
