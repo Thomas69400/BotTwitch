@@ -29,8 +29,11 @@ client.connect().catch(console.error);
 const onlyLetter = /[^a-z\s]/g;
 
 client.on('message', async (channel, tags, message, self) => {
+  console.log(await getUser());
+
   // Le bot ne répond pas à lui-même
-  if (self) return;
+  //if (self) return;
+  console.log(tags);
   // Si le spectateur n'est pas déjà suivi par le systeme de point, l'ajoute
   checkViewers(tags);
   // Supprime tout les caractères spéciaux
