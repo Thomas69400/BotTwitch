@@ -19,3 +19,21 @@ export const checkRole = (tags) => {
 export const toBoolean = (value) => {
   return value === 'true';
 };
+
+/**
+ * Nettoyer le message en supprimant les caractères non imprimables et les paires de substitution Unicode ;
+ * Supprime les paires de substitution Unicode ;
+ * Supprime les espaces à la fin de la chaîne ;
+ * Supprime les espaces au début de la chaîne ;
+ * Remplace les espaces multiples par un seul espace
+ * @param {String} message
+ * @returns message
+ */
+export const clearMessage = (message) => {
+  message = message
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
+    .replace(/\s+$/, '')
+    .replace(/^\s+/, '')
+    .replace(/\s+/g, ' ');
+  return message;
+};
