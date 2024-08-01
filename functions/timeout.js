@@ -1,14 +1,14 @@
 import { getSpecificViewers, getSpecificViewersByName } from './points.js';
-import { getAccessToken } from '../auth.js';
+import { getOauthTokenBot } from '../auth.js';
 import axios from 'axios';
 
 export const timeout = async (client, channel, tags, message) => {
-  const accesToken = await getAccessToken();
-  const url = `https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${process.env.BROADCASTER_ID}&moderator_id=1119604558`;
-  const data = { data: { user_id: 89904723, duration: 5, reason: 'no reason' } };
+  const oauthToken = await getOauthTokenBot();
+  const url = `https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${process.env.BROADCASTER_ID}&moderator_id=${process.env.BOT_ID}`;
+  const data = { data: { user_id: 158556880, duration: 5, reason: 'timeout by a viewer' } };
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${process.env.TOKEN_OAUTH}`,
+    Authorization: `Bearer ${oauthToken}`,
     'Client-Id': process.env.CLIENTID,
   };
   try {
