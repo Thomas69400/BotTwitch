@@ -13,8 +13,9 @@ export const timeout = async (client, channel, tags, message) => {
   };
   try {
     const response = await axios.post(url, data, { headers });
+    console.log(response);
   } catch (error) {
-    console.error('Error dans isNotOnLive:', error);
+    console.error('Error dans timeout:', error);
   }
   // const timeoutRegex = /^!timeout\s+(\d+)\s+@?(\S+)$/;
   // if (!timeoutRegex.test(message)) {
@@ -29,5 +30,5 @@ export const timeout = async (client, channel, tags, message) => {
   //   return;
   // }
   // const viewerToTimeout = getSpecificViewersByName(match[2]);
-  //client.say(channel, `/timeout ${viewerToTimeout.name} ${time}`);
+  // client.say(channel, `/timeout ${viewerToTimeout.name} ${time}`);
 };
