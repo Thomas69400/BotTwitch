@@ -1,10 +1,12 @@
 import fs from 'fs';
-import { isNotOnLive } from '../auth.js';
+import { isNotOnLive } from '../services/auth.js';
 import { toBoolean } from './utils.js';
 
 let viewers = {};
 
-// Charger les points lors du démarrage
+/**
+ * Charger les points lors du démarrage
+ */
 fs.readFile('points.json', 'utf8', (err, data) => {
   if (err) {
     if (err.code === 'ENOENT') {
@@ -21,15 +23,25 @@ fs.readFile('points.json', 'utf8', (err, data) => {
   }
 });
 
+/**
+ * Retourne la liste des viewers
+ * @returns
+ */
 export const getViewers = () => {
   return viewers;
 };
 
+/**
+ * Remet la liste des viewers vide
+ */
 export const resetViewers = () => {
   viewers = {};
 };
 
-// Regarde si un viewer existe sinon lui attribue une Date lastActive
+/**
+ * Regarde si un viewer existe sinon lui attribue une Date lastActive
+ * @param {Object} tags Les données d'un utilisateur
+ */
 export const checkViewers = (tags) => {
   if (!viewers[tags['user-id']]) {
     viewers[tags['user-id']] = {
@@ -41,15 +53,19 @@ export const checkViewers = (tags) => {
     // Mettre à jour le temps de la dernière activité
     viewers[tags['user-id']].lastActive = new Date();
   }
+  savePoints();
 };
 
-// Ajoute des points aux viewers qui ont parlé dans les 5 dernières minutes
+/**
+ * Ajoute des points aux viewers qui ont parlé dans les 5 dernières minutes
+ * @returns
+ */
 export const activeRevenue = async () => {
   if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
 
   const now = new Date();
 
-  for (const [key, data] of Object.entries(viewers)) {
+  for (const [data] of Object.entries(viewers)) {
     const timeDiff = (now - new Date(data.lastActive)) / 1000 / 60; // Temps en minutes
 
     // Si le spectateur a été actif dans les 5 dernières minutes
@@ -60,11 +76,10 @@ export const activeRevenue = async () => {
   savePoints();
 };
 
-// Ajouter des points
 /**
- *
- * @param {Tableau d'objet} winners
- * @param {string} points
+ * Ajoute des points aux utilisateurs
+ * @param {Tableau d'objet} winners Tableau d'objet des personnes qui gagnent des points. Doit contenir au moins id
+ * @param {String} points les points gagnés
  */
 export const addPoints = (winners, points) => {
   winners.forEach((winner) => {
@@ -77,7 +92,25 @@ export const addPoints = (winners, points) => {
   savePoints();
 };
 
-// Sauvegarder les points dans un fichier
+/**
+ * Retire des points aux utilisateurs
+ * @param {Tableau d'objet} loser Tableau d'objet des personnes qui perdent des points. Doit contenir au moins id
+ * @param {String} points le nombre de points perdus
+ */
+export const removePoints = (losers, points) => {
+  losers.forEach((loser) => {
+    const oldData = viewers[loser.id];
+    viewers[loser.id] = {
+      ...oldData,
+      points: oldData.points - points,
+    };
+  });
+  savePoints();
+};
+
+/**
+ * Sauvegarder les points dans un fichier
+ */
 export const savePoints = () => {
   fs.writeFile(process.env.POINTS_JSON, JSON.stringify(viewers, null, 2), (err) => {
     if (err) console.error('Erreur lors de la sauvegarde des points:', err);
@@ -89,7 +122,7 @@ export const savePoints = () => {
  * @param {Object} tags
  * @returns viewer
  */
-export const getSpecificViewers = (tags) => {
+export const getViewer = (tags) => {
   return viewers[tags['user-id']];
 };
 
@@ -98,10 +131,10 @@ export const getSpecificViewers = (tags) => {
  * @param {string} name
  * @returns viewer
  */
-export const getSpecificViewersByName = (name) => {
+export const getIdViewerByName = (name) => {
   for (const id in viewers) {
     if (viewers[id].name === name) {
-      return viewers[id];
+      return id;
     }
   }
 };

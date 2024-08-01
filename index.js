@@ -11,7 +11,7 @@ import { activeRevenue, checkViewers } from './functions/points.js';
 import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
 import { timeout } from './functions/timeout.js';
 import { makeVip } from './functions/vip.js';
-import { getOauthTokenBot } from './auth.js';
+import { getOauthTokenBot } from './services/auth.js';
 
 dotenv.config();
 dotenv.config({ path: process.env.CONFIG_PATH });
@@ -29,13 +29,12 @@ client.connect().catch(console.error);
 
 // Regex
 const onlyLetter = /[^a-z\s]/g;
+const letterNumber = /[^a-z1-9\s]/;
 
 client.on('message', async (channel, tags, message, self) => {
-  console.log(await getUser());
-
   // Le bot ne répond pas à lui-même
-  //if (self) return;
-  console.log(tags);
+  if (self) return;
+
   // Si le spectateur n'est pas déjà suivi par le systeme de point, l'ajoute
   checkViewers(tags);
   // Supprime tout les caractères spéciaux
@@ -45,7 +44,8 @@ client.on('message', async (channel, tags, message, self) => {
   if (message.startsWith('!cancel')) cancelRaffle(client, tags);
   if (message.startsWith('!join')) joinRaffle(tags);
 
-  if (message.startsWith('!timeout')) timeout(client, channel, tags, message.toLowerCase());
+  if (message.startsWith('!timeout'))
+    timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
 
   if (!checkCooldown(tags['user-id'])) {
     checkForPourquoi(client, channel, trunkMessage, tags);
