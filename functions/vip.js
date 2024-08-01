@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getOauthTokenBroadcaster } from '../auth.js';
 
-export const vip = async () => {
+export const makeVip = async () => {
   const oauthToken = await getOauthTokenBroadcaster();
   const url = `https://api.twitch.tv/helix/channels/vips?broadcaster_id=${process.env.BROADCASTER_ID}&user_id=89904723`;
   const headers = {
@@ -15,3 +15,5 @@ export const vip = async () => {
     console.error('Error in vip function:', error.response ? error.response.data : error.message);
   }
 };
+
+export const removeVip = async () => {};

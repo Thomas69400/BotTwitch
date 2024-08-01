@@ -10,7 +10,7 @@ import {
 import { activeRevenue, checkViewers } from './functions/points.js';
 import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
 import { timeout } from './functions/timeout.js';
-import { vip } from './functions/vip.js';
+import { makeVip } from './functions/vip.js';
 import { getOauthTokenBot } from './auth.js';
 
 dotenv.config();
