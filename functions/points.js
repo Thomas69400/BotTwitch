@@ -7,21 +7,23 @@ let viewers = {};
 /**
  * Charger les points lors du démarrage
  */
-fs.readFile('points.json', 'utf8', (err, data) => {
-  if (err) {
-    if (err.code === 'ENOENT') {
-      console.log('Aucun fichier de points trouvé, initialisation à un objet vide.');
+export const readFile = () => {
+  fs.readFile(`${process.env.POINTS_JSON}`, 'utf8', (err, data) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        console.log('Aucun fichier de points trouvé, initialisation à un objet vide.');
+      } else {
+        console.error('Erreur lors du chargement des points:', err);
+      }
     } else {
-      console.error('Erreur lors du chargement des points:', err);
+      try {
+        viewers = JSON.parse(data);
+      } catch (jsonErr) {
+        console.error("Erreur lors de l'analyse du fichier JSON:", jsonErr);
+      }
     }
-  } else {
-    try {
-      viewers = JSON.parse(data);
-    } catch (jsonErr) {
-      console.error("Erreur lors de l'analyse du fichier JSON:", jsonErr);
-    }
-  }
-});
+  });
+};
 
 /**
  * Retourne la liste des viewers
@@ -53,7 +55,6 @@ export const checkViewers = (tags) => {
     // Mettre à jour le temps de la dernière activité
     viewers[tags['user-id']].lastActive = new Date();
   }
-  savePoints();
 };
 
 /**
@@ -73,7 +74,6 @@ export const activeRevenue = async () => {
       data.points += 10; // Par exemple, 10 points toutes les 5 minutes
     }
   }
-  savePoints();
 };
 
 /**

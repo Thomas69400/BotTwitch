@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+dotenv.config();
+dotenv.config({ path: process.env.CONFIG_PATH });
 import tmi from 'tmi.js';
 
 import {
@@ -12,9 +14,7 @@ import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
 import { timeout } from './functions/timeout.js';
 import { makeVip } from './functions/vip.js';
 import { getOauthTokenBot } from './services/auth.js';
-
-dotenv.config();
-dotenv.config({ path: process.env.CONFIG_PATH });
+import { readFile } from './functions/points.js';
 
 // Initialisation
 const client = new tmi.Client({
@@ -26,7 +26,7 @@ const client = new tmi.Client({
   channels: [process.env.CHANNEL],
 });
 client.connect().catch(console.error);
-
+readFile();
 // Regex
 const onlyLetter = /[^a-z\s]/g;
 const letterNumber = /[^a-z1-9\s]/;
