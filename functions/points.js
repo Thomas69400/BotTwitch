@@ -47,6 +47,8 @@ export const resetViewers = () => {
 export const checkViewers = (tags) => {
   if (!viewers[tags['user-id']]) {
     viewers[tags['user-id']] = {
+      id: tags['user-id'],
+      login: tags.username,
       name: tags.username,
       points: 0,
       lastActive: new Date(),
@@ -118,12 +120,12 @@ export const savePoints = () => {
 };
 
 /**
- * Retourne un viewer avec ses points grâce à son tag
- * @param {Object} tags
+ * Retourne un viewer avec ses points grâce à son id
+ * @param {Number} id
  * @returns viewer
  */
-export const getViewer = (tags) => {
-  return viewers[tags['user-id']];
+export const getViewer = (id) => {
+  return viewers[id];
 };
 
 /**
