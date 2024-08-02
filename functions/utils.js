@@ -21,8 +21,8 @@ export const shuffleArray = (array) => {
  * @returns integer 0 si rien ; 1 si modérateur ; 2 si diffuseur
  */
 export const checkRole = (tags) => {
-  if (tags['badges']['broadcaster'] == 1) return 2;
-  else if (tags['mod'] === true) return 1;
+  if (tags?.badges?.broadcaster == 1) return 2;
+  else if (tags.mod === true) return 1;
   else return 0;
 };
 
@@ -59,7 +59,7 @@ export const clearMessage = (message) => {
 
 /**
  * Donne à l'utilisateur la bonne façon d'utiliser les commandes
- * @param {string} message la commande à utiliser
+ * @param {string} [message] (les crochets signifient que c'est optionnel) la commande à utiliser ou rien si on veut une listes des commandes
  * @returns string la façon dont on utilise la commande
  */
 export const commandes = (message) => {
@@ -69,10 +69,6 @@ export const commandes = (message) => {
     case 'vip':
       return `!vip pseudo ex: !vip ${process.env.CHANNEL}`;
     default:
-      break;
+      return 'Commandes disponible: !timeout ; !vip ; !unvip';
   }
-};
-
-export const allCommandes = (client) => {
-  client.say(process.env.CHANNEL, '!timeout ; !vip ; !unvip');
 };
