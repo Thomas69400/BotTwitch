@@ -3,13 +3,13 @@ import { getOauthToken } from './auth.js';
 
 /**
  * Envoie d'un message privé par le bot à un utilisateur en particulier
- * @param {Number} idToUser id de l'utilisateur qui reçoit le message privé
- * @param {String} messageToSend message que va envoyer le bot
- * @returns response.status : le status de la requête
+ * @param {number} userId id de l'utilisateur à qui on envoie le message privé
+ * @param {string} messageToSend message que va envoyer le bot
+ * @returns {number} response.status: le status de la requête
  */
-export const serviceWhisper = async (idToUser, messageToSend) => {
+export const serviceWhisper = async (userId, messageToSend) => {
   const oauthToken = await getOauthToken(true);
-  const url = `https://api.twitch.tv/helix/whispers?from_user_id=${process.env.BOT_ID}&to_user_id=${idToUser}`;
+  const url = `https://api.twitch.tv/helix/whispers?from_user_id=${process.env.BOT_ID}&to_user_id=${userId}`;
   const data = {
     message: `${messageToSend}`,
   };

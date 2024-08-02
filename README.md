@@ -78,6 +78,10 @@ TIMER_RAFFLE =
 
 ## Concepts
 
+- commande pour voir les points
+- commande pour voir les points de tout le monde
+- commande pour voir les commandes 🙂 (et leurs prix)
+- commande pour voir les commandes version modo
 - Tous les mecs d'une couleur aléatoire qui appartient à Twitch (ex : rouge) sont timeout 60 secondes(au pif) --> perdes des points (quand y'en aura)
 - Même chose qu'au dessus avec les badges
 - Timeout des gens contre des points
