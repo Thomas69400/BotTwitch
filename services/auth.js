@@ -29,7 +29,7 @@ export const getOauthToken = async (forBot) => {
 
 /**
  * Envoie d'une requête à l'API twitch pour récupérer chaînes en live et voir si notre stream l'est
- * @return {boolean} si il est en live ou non
+ * @return {Object} la requête passée
  */
 export const isNotOnLive = async () => {
   console.log('in service isNotOnLive');
@@ -40,7 +40,7 @@ export const isNotOnLive = async () => {
 
   try {
     const response = await axios.get(url, { headers });
-    return response.data.data.length === 0;
+    return response.data.data;
   } catch (error) {
     console.error('Error dans isNotOnLive:', error);
   }

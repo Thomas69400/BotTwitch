@@ -65,7 +65,7 @@ export const clearMessage = (message) => {
 export const commandes = (message) => {
   switch (message) {
     case 'timeout':
-      return `!timeout pseudo durée(minutes) ex: !timeout ${process.env.CHANNEL} 1`;
+      return `!timeout pseudo durée(minutes) ex: !timeout ${process.env.CHANNEL} 1 --> prix : ${process.env.TIMEOUT_BASE_COST}`;
     case 'vip':
       return `!vip pseudo ex: !vip ${process.env.CHANNEL}`;
     default:
