@@ -46,6 +46,8 @@ client.on('message', async (channel, tags, message, self) => {
   const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
 
   // Fonctions
+  if (trunkMessage.startsWith('!raffle'))
+    startRaffle(client, tags, message.replace(amountRegex, ''));
   if (message.startsWith('!cancel')) cancelRaffle(client, tags);
   if (message.startsWith('!join')) joinRaffle(tags);
   if (message.startsWith('!help')) client.say(process.env.CHANNEL, commandes());
@@ -61,14 +63,6 @@ client.on('message', async (channel, tags, message, self) => {
   if (containtBeg.test(message) && containtRaffle.test(message)) {
     begForRaffle(client, tags, message);
   }
-});
-
-client.on('message', async (channel, tags, message, self) => {
-  const trunkMessage = message.toLowerCase();
-
-  // Lorsqu'une personne écrit !raffle
-  if (trunkMessage.startsWith('!raffle'))
-    startRaffle(client, tags, message.replace(amountRegex, ''));
 });
 
 // Ajouter des points selon un interval régulié
