@@ -49,6 +49,10 @@ export const timeout = async (client, channel, tags, message) => {
   let userToTimeout = {};
   if (!isViewerHere) {
     userToTimeout = await getUser(splitMessage[1]);
+    if (userToTimeout.length <= 0) {
+      client.reply(channel, "Cet utilisateur n'existe pas.", tags.id);
+      return;
+    }
   } else {
     userToTimeout = [{ id: isViewerHere }];
   }
