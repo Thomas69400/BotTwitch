@@ -44,6 +44,8 @@ TIMER_RAFFLE =
 TIMER_ADD_POINTS =
 
 TIMEOUT_BASE_COST =
+RANDOM_RAFFLE_MIN =
+RANDOM_RAFFLE_MAX =
 ```
 
 .env.production
@@ -56,6 +58,8 @@ TIMER_RAFFLE =
 TIMER_ADD_POINTS =
 
 TIMEOUT_BASE_COST =
+RANDOM_RAFFLE_MIN =
+RANDOM_RAFFLE_MAX =
 ```
 
 .env.test
@@ -64,6 +68,8 @@ TIMEOUT_BASE_COST =
 LIVE_REQUIERED = false
 POINTS_JSON = points.test.json
 TIMER_RAFFLE =
+RANDOM_RAFFLE_MIN =
+RANDOM_RAFFLE_MAX =
 ```
 
 3. Créer les fichiers "points.json", "points.dev.json" et "points.test.json" avec les données suivantes :
