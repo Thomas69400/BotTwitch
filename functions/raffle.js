@@ -1,6 +1,6 @@
 import { isNotOnLive } from '../services/auth.js';
 import { addPoints } from './points.js';
-import { checkRole, shuffleArray, sleep, toBoolean } from './utils.js';
+import { checkRole, shuffleArray, sleep, toBoolean, roundNumber } from './utils.js';
 
 const amountRegex = /\D/g; // Tout sauf les chiffres
 
@@ -15,6 +15,7 @@ let raffleParticipants = [];
  * @returns {void} affiche le noms de gagnants et ajoute les points ou un message de non-lieu
  */
 export const startRaffle = async (client, tag, message) => {
+  if (raffleStatus) return; // Si un raffle est déjà en cours
   if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
 
   if (checkRole(tag) > 0) {
@@ -23,7 +24,6 @@ export const startRaffle = async (client, tag, message) => {
     raffleParticipants = [];
 
     const amount = message.replace(amountRegex, '');
-    console.log(amount);
 
     client.say(
       process.env.CHANNEL,
@@ -54,8 +54,22 @@ export const startRaffle = async (client, tag, message) => {
       process.env.CHANNEL,
       `Gagnant${listWinner.length > 1 ? 's' : ''} du raffle : ${winnerNames.replaceAll(',', ' ')}`,
     );
-    addPoints(listWinner, amount / ratioWinner);
+    addPoints(listWinner, Math.ceil(amount / ratioWinner));
   }
+};
+
+/**
+ * Quand un utilisateur demande un raffle, le bot en lance un
+ * @param {Object} client le client
+ */
+//TODO Faire un ratio du nombre de raffle fait pendant le live avec le temps de live passé. Si le ratio est inferieur a x alors on lance un raffle sinon pas de raffle
+export const begForRaffle = (client) => {
+  const value = roundNumber(
+    Math.random() *
+      (Number(process.env.RANDOM_RAFFLE_MAX) - Number(process.env.RANDOM_RAFFLE_MIN)) +
+      Number(process.env.RANDOM_RAFFLE_MIN),
+  );
+  client.say(process.env.CHANNEL, `!raffle ${value}`);
 };
 
 /**
@@ -70,8 +84,8 @@ export const joinRaffle = (tags) => {
 
 /**
  * Annule un raffle en cours
- * @param {Oject} client Le client
- * @param {Oject} tags Les données d'un utilisateur
+ * @param {Object} client Le client
+ * @param {Object} tags Les données d'un utilisateur
  * @returns {boolean} raffleStatus
  */
 export const cancelRaffle = (client, tags) => {
