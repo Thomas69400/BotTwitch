@@ -1,5 +1,10 @@
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Retourne un tableau mélangé dans le désordre total
+ * @param {Array} array Tableau à mélanger
+ * @returns array : le tableau mélangé
+ */
 export const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -10,10 +15,24 @@ export const shuffleArray = (array) => {
   return array;
 };
 
+/**
+ * Regarde si un utilisateur est un diffuseur, un modérateur ou un utilisateur normal
+ * @param {Object} tags Les données de l'utilisateur
+ * @returns integer 0 si rien ; 1 si modérateur ; 2 si diffuseur
+ */
 export const checkRole = (tags) => {
   if (tags['badges']['broadcaster'] == 1) return 2;
   else if (tags['mod'] === true) return 1;
   else return 0;
+};
+
+/**
+ * Arrondi le nombre passé à la dizaine supérieur
+ * @param {integer} number Le nombre à arrondir
+ * @returns {integer} Le nombre arrondi
+ */
+export const roundNumber = (number) => {
+  return Math.ceil(number / 10) * 10;
 };
 
 export const toBoolean = (value) => {
@@ -36,4 +55,24 @@ export const clearMessage = (message) => {
     .replace(/^\s+/, '')
     .replace(/\s+/g, ' ');
   return message;
+};
+
+/**
+ * Donne à l'utilisateur la bonne façon d'utiliser les commandes
+ * @param {string} message la commande à utiliser
+ * @returns string la façon dont on utilise la commande
+ */
+export const commandes = (message) => {
+  switch (message) {
+    case 'timeout':
+      return `!timeout pseudo durée(minutes) ex: !timeout ${process.env.CHANNEL} 1`;
+    case 'vip':
+      return `!vip pseudo ex: !vip ${process.env.CHANNEL}`;
+    default:
+      break;
+  }
+};
+
+export const allCommandes = (client) => {
+  client.say(process.env.CHANNEL, '!timeout ; !vip ; !unvip');
 };
