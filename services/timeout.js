@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getOauthTokenBot } from './auth.js';
+import { getOauthToken } from './auth.js';
 
 /**
  * Envoie d'une requête à l'API twitch pour timeout un viewer
@@ -9,7 +9,7 @@ import { getOauthTokenBot } from './auth.js';
  * @return response : contient le status de la requête
  */
 export const serviceTimeout = async (idTimeout, time, buyer) => {
-  const oauthToken = await getOauthTokenBot();
+  const oauthToken = await getOauthToken(true);
   const url = `https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${process.env.BROADCASTER_ID}&moderator_id=${process.env.BOT_ID}`;
   const data = {
     data: {

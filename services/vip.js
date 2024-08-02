@@ -1,8 +1,8 @@
-import { getOauthTokenBroadcaster } from './auth.js';
+import { getOauthToken } from './auth.js';
 import axios from 'axios';
 
 export const serviceMakeVip = async () => {
-  const oauthToken = await getOauthTokenBroadcaster();
+  const oauthToken = await getOauthToken(false);
   const url = `https://api.twitch.tv/helix/channels/vips?broadcaster_id=${process.env.BROADCASTER_ID}&user_id=89904723`;
   const headers = {
     Authorization: `Bearer ${oauthToken}`,

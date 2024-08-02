@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { getOauthTokenBot } from './auth.js';
+import { getOauthToken } from './auth.js';
 
 export const getUser = async (name) => {
-  const oauthToken = await getOauthTokenBot();
+  const oauthToken = await getOauthToken(true);
   const url = `https://api.twitch.tv/helix/users?login=${name}`;
   const headers = {
     'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getOauthTokenBot } from './auth.js';
+import { getOauthToken } from './auth.js';
 
 /**
  * Envoie d'un message privé par le bot à un utilisateur en particulier
@@ -8,7 +8,7 @@ import { getOauthTokenBot } from './auth.js';
  * @returns response.status : le status de la requête
  */
 export const serviceWhisper = async (idToUser, messageToSend) => {
-  const oauthToken = await getOauthTokenBot();
+  const oauthToken = await getOauthToken(true);
   const url = `https://api.twitch.tv/helix/whispers?from_user_id=${process.env.BOT_ID}&to_user_id=${idToUser}`;
   const data = {
     message: `${messageToSend}`,
