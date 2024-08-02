@@ -95,11 +95,11 @@ RANDOM_RAFFLE_MAX =
 - Enlever/Devenir vip
 - Roulette de points (Ouverture avec une chance aléatoire de gagner pour doubler sa mise)
 - Demander au bot de lancer un raffle (avec un temps d'attente) la valeur varie entre un min et un max
+  - le bot dit rien quand il est en cooldown
 
 ## TODO List
 
-1. Changer les systèmes de points par un tableau d'objets au lieu d'un objet d'objets et modifier la fonction activeRevenu et le reste en conséquence
-2. Voir la doc pour les points
-3. Voir pour mongoDb
-4. Tout changer en TS
-5. Revoir les tests
+1. Voir la doc pour les points
+2. Voir pour mongoDb
+3. Tout changer en TS
+4. Revoir les tests
