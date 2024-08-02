@@ -1,17 +1,17 @@
 import { getViewer, getIdViewerByName, removePoints } from './points.js';
 import { serviceTimeout } from '../services/timeout.js';
-import { clearMessage } from './utils.js';
+import { clearMessage, commandes } from './utils.js';
 import { getUser } from '../services/utils.js';
 import { serviceWhisper } from '../services/whisper.js';
 
 // name1 = userToTimeout name2 = buyer
 const timeoutResponses = [
   '<name2> a trahis la confiance de <name1>',
-  "<name2> a renvoyé <name1> a l'état de sans-éclat.",
-  "<name2> a payé <montant> pour qu'<name1> ne fasse plus parti de la commu. C'est sad. PRANKEX",
+  "<name2> a renvoyé <name1> à l'état de sans-éclat.",
+  "<name2> a payé <montant> pour que <name1> ne fasse plus parti de la commu. C'est sad. PRANKEX",
   'AHAHAH mange ton caca <name1> :index_pointing_at_the_viewer: :face_with_hand_over_mouth: - signé <name2>',
 ];
-
+let textWhisper = '';
 /**
  * Timeout un utilisateur
  * @param {Client} client client
@@ -20,27 +20,30 @@ const timeoutResponses = [
  * @returns {void}
  */
 export const timeout = async (client, channel, tags, message) => {
-  const isNumber = /^\d/; // que des nombres
+  const isNumber = /^[1-9]\d*$/; // que des nombres
   const buyer = [getViewer(tags['user-id'])];
 
   // séparation des arguments et vérifications
   // TODO faire une fonction dynamique et réutilisable qui check les parametres de commandes (deux parametres un tableau avec les arguments et un autre pour les vérifier)
   const splitMessage = clearMessage(message).split(' ');
   if (typeof splitMessage[1] != 'string' || !isNumber.test(splitMessage[2]) || splitMessage[3]) {
-    const textWhisper =
-      "Désolé, je n'ai pas compris la demande.\n Essayez celle-ci : !timeout pseudo durée(minutes) ex: !timeout tryllogy 1";
-    const responseWhisper = await serviceWhisper(tags['user-id'], textWhisper);
+    if (splitMessage.length === 1) {
+      textWhisper = commandes(splitMessage[0]);
+    } else {
+      textWhisper =
+        "Désolé, je n'ai pas compris la demande.\n Essayez celle-ci : !timeout pseudo durée(minutes) ex: !timeout tryllogy 1";
+    }
+    const responseWhisper = serviceWhisper(tags['user-id'], textWhisper);
     if (responseWhisper < 200 && responseWhisper >= 300) {
       client.reply(process.env.CHANNEL, textWhisper, tags.id);
     }
     return;
   }
-  if (buyer.points < process.env.TIMEOUT_BASE_COST * time) {
+  const time = Math.round(Number(splitMessage[2]));
+  if (buyer[0].points < process.env.TIMEOUT_BASE_COST * time) {
     client.reply(channel, "Tu n'as pas assez de points. MONKE", tags.id);
     return;
   }
-
-  const time = Math.round(Number(splitMessage[2]));
   const isViewerHere = getIdViewerByName(splitMessage[1]);
   let userToTimeout = {};
   if (!isViewerHere) {
