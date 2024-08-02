@@ -11,7 +11,7 @@ const timeoutResponses = [
   "<name2> a payé <montant> pour que <name1> ne fasse plus parti de la commu. C'est sad. PRANKEX",
   'AHAHAH mange ton caca <name1> :index_pointing_at_the_viewer: :face_with_hand_over_mouth: - signé <name2>',
 ];
-let textWhisper = '';
+
 /**
  * Timeout un utilisateur
  * @param {Client} client client
@@ -22,6 +22,7 @@ let textWhisper = '';
 export const timeout = async (client, channel, tags, message) => {
   const isNumber = /^[1-9]\d*$/; // que des nombres
   const buyer = [getViewer(tags['user-id'])];
+  let textWhisper = '';
 
   // séparation des arguments et vérifications
   // TODO faire une fonction dynamique et réutilisable qui check les parametres de commandes (deux parametres un tableau avec les arguments et un autre pour les vérifier)
