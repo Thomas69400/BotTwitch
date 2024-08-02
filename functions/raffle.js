@@ -4,6 +4,7 @@ import { checkRole, shuffleArray, sleep, toBoolean, roundNumber } from './utils.
 
 let raffleStatus = false;
 let raffleParticipants = [];
+let numberRaffle = 0;
 
 /**
  * Commencer un raffle
@@ -14,7 +15,10 @@ let raffleParticipants = [];
  */
 export const startRaffle = async (client, tags, amount) => {
   if (raffleStatus) return; // Si un raffle est déjà en cours
-  if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
+  if (toBoolean(process.env.LIVE_REQUIERED)) {
+    const isOnLive = await isNotOnLive();
+    if (isOnLive.length === 0) return;
+  }
   if (checkRole(tags) === 0) return;
 
   // on crée un nouveau raffle donc on reset les participants
@@ -27,7 +31,7 @@ export const startRaffle = async (client, tags, amount) => {
   );
 
   await sleep(process.env.TIMER_RAFFLE);
-
+  numberRaffle++;
   // une fois le timer passé, si le raffle ne s'est pas fait cancel on le désactive
   // et on pick les gagnants
   if (!raffleStatus) return;
@@ -58,14 +62,20 @@ export const startRaffle = async (client, tags, amount) => {
  * Quand un utilisateur demande un raffle, le bot en lance un
  * @param {Object} client le client
  */
-//TODO Faire un @Thomas69400 => ratio🤣 du nombre de raffle fait pendant le live avec le temps de live passé. Si le ratio est inferieur a x alors on lance un raffle sinon pas de raffle
-export const begForRaffle = (client) => {
+export const begForRaffle = async (client) => {
   const value = roundNumber(
     Math.random() *
       (Number(process.env.RANDOM_RAFFLE_MAX) - Number(process.env.RANDOM_RAFFLE_MIN)) +
       Number(process.env.RANDOM_RAFFLE_MIN),
   );
-  startRaffle(client, { mod: true }, value);
+  const isLive = await isNotOnLive();
+  if (isLive.length === 0) return;
+  const liveStartedAt = new Date(isLive[0]['started_at']);
+  const now = new Date();
+  const differenceInHour = Math.round((now - liveStartedAt) / 1000 / 60 / 60);
+  if ((numberRaffle / differenceInHour) * 100 < process.env.RAFFLE_RATIO_MIN) {
+    startRaffle(client, { mod: true }, value);
+  }
 };
 
 /**
