@@ -11,3 +11,5 @@ package-lock.json
 points.json
 points.dev.json
 points.test.json
+
+coverage

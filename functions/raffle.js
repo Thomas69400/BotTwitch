@@ -1,41 +1,55 @@
 import { isNotOnLive } from '../services/auth.js';
-import { shuffleArray, sleep, checkRole, toBoolean } from './utils.js';
 import { addPoints } from './points.js';
+import { checkRole, shuffleArray, sleep, toBoolean } from './utils.js';
 
-const regexRaffle = /^!raffle/;
+const amountRegex = /\D/g; // Tout sauf les chiffres
+
 let raffleStatus = false;
-let viewersRaffleInfo = [];
+let raffleParticipants = [];
 
 /**
  * Commencer un raffle
- * @param {any} client Le client
+ * @param {Object} client Le client
  * @param {Object} tag Les données de l'utilisateur de la commande
- * @param {String} message Le message envoyé sur le chat
- * @returns Nom des gagnants
+ * @param {string} message Le message envoyé dans le chat
+ * @returns {void} affiche le noms de gagnants et ajoute les points ou un message de non-lieu
  */
 export const startRaffle = async (client, tag, message) => {
   if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
+
   if (checkRole(tag) > 0) {
+    // on crée un nouveau raffle donc on reset les participants
     raffleStatus = true;
-    viewersRaffleInfo = [];
-    const amount = message.replace(regexRaffle, '').replaceAll(' ', '');
+    raffleParticipants = [];
+
+    const amount = message.replace(amountRegex, '');
+    console.log(amount);
+
     client.say(
       process.env.CHANNEL,
-      `Un raffle de ${amount} est en cours ! Tapez !join pour rejoindre !`,
+      `Un raffle de ${amount} est en cours! Tapez !join pour rejoindre!`,
     );
+
     await sleep(process.env.TIMER_RAFFLE);
+
+    // une fois le timer passé, si le raffle ne s'est pas fait cancel on le désactive
+    // et on pick les gagnants
     if (!raffleStatus) return;
     raffleStatus = false;
-    viewersRaffleInfo = shuffleArray(viewersRaffleInfo);
-    if (viewersRaffleInfo.length <= 0) {
+    raffleParticipants = shuffleArray(raffleParticipants);
+    if (raffleParticipants.length <= 0) {
       client.say(process.env.CHANNEL, `Personne n'a rejoint le raffle Smoge`);
       return;
     }
-    const ratioWinner = Math.round((viewersRaffleInfo.length * process.env.RAFFLE_WIN_RATIO) / 100);
-    const listWinner = viewersRaffleInfo.slice(0, ratioWinner);
+
+    const ratioWinner = Math.round(
+      (raffleParticipants.length * process.env.RAFFLE_WIN_RATIO) / 100,
+    );
+    const listWinner = raffleParticipants.slice(0, ratioWinner);
     const winnerNames = `${listWinner.map((winner) => {
       return winner.name;
     })}`;
+
     client.say(
       process.env.CHANNEL,
       `Gagnant${listWinner.length > 1 ? 's' : ''} du raffle : ${winnerNames.replaceAll(',', ' ')}`,
@@ -47,17 +61,18 @@ export const startRaffle = async (client, tag, message) => {
 /**
  * Rejoindre un raffle en cours
  * @param {Object} tags Les données d'un utilisateur
+ * @returns {void} mais ajoute les données de l'utilisateur dans la variable global raffleParticipants
  */
 export const joinRaffle = (tags) => {
-  if (!viewersRaffleInfo.find((user) => user.id === tags['user-id']))
-    viewersRaffleInfo.push({ id: tags['user-id'], name: tags.username });
+  if (!raffleParticipants.find((user) => user.id === tags['user-id']))
+    raffleParticipants.push({ id: tags['user-id'], name: tags.username });
 };
 
 /**
  * Annule un raffle en cours
- * @param {any} client Le client
+ * @param {Oject} client Le client
  * @param {Oject} tags Les données d'un utilisateur
- * @returns
+ * @returns {boolean} raffleStatus
  */
 export const cancelRaffle = (client, tags) => {
   if (checkRole(tags) > 0) {
@@ -68,30 +83,36 @@ export const cancelRaffle = (client, tags) => {
 };
 
 /**
- * Remet les informations d'un raffle à vide
+ * Réinitialise la variable globale `raffleParticipants` à un tableau vide.
+ * N'est utilisé que dans les fichiers test
+ * @returns {void} Cette fonction ne retourne rien mais change la valeur d'une variable global
  */
-export const resetViewersRaffleInfo = () => {
-  viewersRaffleInfo = [];
+export const resetRaffleParticipants = () => {
+  raffleParticipants = [];
 };
 
 /**
- * Remet le status du raffle à false
+ * Réinitialise la variable globale `raffleStatus` à false.
+ * N'est utilisé que dans les fichiers test
+ * @returns {void}
  */
 export const resetRaffleStatus = () => {
   raffleStatus = false;
 };
 
 /**
- * Retourne les informations du raffle en cours
- * @returns viewersRaffleInfo
+ * Retourne les informations des participants au raffle en cours
+ * N'est utilisé que dans les fichiers test
+ * @returns {Object[]} raffleParticipants
  */
-export const getViewersRaffleInfo = () => {
-  return viewersRaffleInfo;
+export const getRaffleParticipants = () => {
+  return raffleParticipants;
 };
 
 /**
  * Retourne le status du raffle
- * @returns raffleStatus
+ * N'est utilisé que dans les fichiers test
+ * @returns {boolean} raffleStatus
  */
 export const getRaffleStatus = () => {
   return raffleStatus;

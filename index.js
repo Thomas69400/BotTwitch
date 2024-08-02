@@ -9,12 +9,10 @@ import {
   checkForQui,
   checkForQuoi,
 } from './functions/whoWhyWhat.js';
-import { activeRevenue, checkViewers } from './functions/points.js';
+import { activeRevenue, checkViewers, readFile } from './functions/points.js';
 import { startRaffle, cancelRaffle, joinRaffle } from './functions/raffle.js';
 import { timeout } from './functions/timeout.js';
-import { makeVip } from './functions/vip.js';
 import { getOauthTokenBot } from './services/auth.js';
-import { readFile } from './functions/points.js';
 
 // Initialisation
 const client = new tmi.Client({
