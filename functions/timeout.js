@@ -34,9 +34,9 @@ export const timeout = async (client, channel, tags, message) => {
       textWhisper =
         "Désolé, je n'ai pas compris la demande.\n Essayez celle-ci : !timeout pseudo durée(minutes) ex: !timeout tryllogy 1";
     }
-    const responseWhisper = serviceWhisper(tags['user-id'], textWhisper);
-    if (responseWhisper < 200 && responseWhisper >= 300) {
-      client.reply(process.env.CHANNEL, textWhisper, tags.id);
+    const responseWhisper = await serviceWhisper(tags['user-id'], textWhisper);
+    if (responseWhisper !== 204) {
+      handleTimeoutError(responseWhisper, client, channel, tags.id);
     }
     return;
   }
@@ -59,11 +59,8 @@ export const timeout = async (client, channel, tags, message) => {
 
   const response = await serviceTimeout(userToTimeout[0]['id'], time * 60, tags.username);
 
-  if (response === 400) {
-    client.reply(channel, 'Cet utilisateur ne peut pas être timeout!', tags.id);
-    return;
-  } else if (response < 200 && response >= 300) {
-    client.reply(channel, "Erreur lors de la demande à l'api", tags.id);
+  if (response !== 200) {
+    handleTimeoutError(response, client, channel, tags.id);
     return;
   }
 
@@ -86,4 +83,19 @@ const getRandomResponse = (userToTimeout, buyer, montant) => {
     .replace('<name2>', buyer)
     .replace('<montant>', montant ?? '');
   return response;
+};
+
+/**
+ * Fonction pour gérer les erreurs de timeout
+ * @param {integer} status le status de la requête
+ * @param {Object} client le client
+ * @param {Object} channel le channel
+ * @param {integer} replyId l'id de la personne qui reçoit la réponse
+ */
+const handleTimeoutError = (status, client, channel, replyId) => {
+  if (status === 400) {
+    client.reply(channel, 'Cet utilisateur ne peut pas être timeout!', replyId);
+  } else if (status < 200 || status >= 300) {
+    client.reply(channel, "Erreur lors de la demande à l'api", replyId);
+  }
 };
