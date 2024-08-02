@@ -1,7 +1,14 @@
 import axios from 'axios';
 import { getOauthToken } from './auth.js';
 
+/**
+ * Envoie d'une requête à l'API twitch pour récupérer un User
+ * @param {string} name le nom de la personne à récuperer
+ * @return {Object} access_token contenant le token
+ */
 export const getUser = async (name) => {
+  console.log('in getUser service');
+
   const oauthToken = await getOauthToken(true);
   const url = `https://api.twitch.tv/helix/users?login=${name}`;
   const headers = {
