@@ -42,9 +42,10 @@ export const startRaffle = async (client, tag, message) => {
       return;
     }
 
-    const ratioWinner = Math.round(
-      (raffleParticipants.length * process.env.RAFFLE_WIN_RATIO) / 100,
-    );
+    const ratioWinner = Math.round((raffleParticipants.length * process.env.RAFFLE_WIN_RATIO) / 100)
+      ? Math.round((raffleParticipants.length * process.env.RAFFLE_WIN_RATIO) / 100)
+      : 1;
+
     const listWinner = raffleParticipants.slice(0, ratioWinner);
     const winnerNames = `${listWinner.map((winner) => {
       return winner.name;
