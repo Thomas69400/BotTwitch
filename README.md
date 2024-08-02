@@ -82,8 +82,9 @@ TIMER_RAFFLE =
 - Même chose qu'au dessus avec les badges
 - Timeout des gens contre des points
 - Voler des points aux autres/Payer pour faire perdre (payer plus que la cible n'en perde)
-- Voler/Enlever/Devenir vip
+- Enlever/Devenir vip
 - Roulette de points (Ouverture avec une chance aléatoire de gagner pour doubler sa mise)
+- Demander au bot de lancer un raffle (avec un temps d'attente) la valeur varie entre un min et un max
 
 ## TODO List
 

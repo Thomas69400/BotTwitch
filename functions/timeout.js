@@ -6,7 +6,7 @@ import { serviceWhisper } from '../services/whisper.js';
 
 // name1 = userToTimeout name2 = buyer
 const timeoutResponses = [
-  '<name2> a trahis la confiance de <name1>.',
+  '<name2> a trahis la confiance de <name1>',
   "<name2> a renvoyé <name1> a l'état de sans-éclat.",
   "<name2> a payé <montant> pour qu'<name1> ne fasse plus parti de la commu. C'est sad. PRANKEX",
   'AHAHAH mange ton caca <name1> :index_pointing_at_the_viewer: :face_with_hand_over_mouth: - signé <name2>',
@@ -22,7 +22,7 @@ let userToTimeout = {};
  * @returns
  */
 export const timeout = async (client, channel, tags, message) => {
-  const isNumber = /^[1-9]/;
+  const isNumber = /^(0|[1-9][0-9]*)$/;
   const splitMessage = clearMessage(message).split(' ');
 
   if (!isNumber.test(splitMessage[2]) || typeof splitMessage[1] != 'string' || splitMessage[3]) {
@@ -49,7 +49,7 @@ export const timeout = async (client, channel, tags, message) => {
     ];
   }
 
-  if (viewerWantTimeout.points < process.env.TIMEOUT_BASE_COST * time) {
+  if (viewerWantTimeout[0].points < process.env.TIMEOUT_BASE_COST * time) {
     client.reply(channel, "Tu n'as pas assez de points. MONKE", tags.id);
     return;
   }
@@ -60,8 +60,9 @@ export const timeout = async (client, channel, tags, message) => {
     client.reply(channel, 'Cet utilisateur ne peut pas être timeout !', tags.id);
     return;
   }
+
   const cost = process.env.TIMEOUT_BASE_COST * time;
-  client.say(process.env.CHANNEL, getRandomResponse(userToTimeout[0].login, tags.username, cost));
+  client.say(process.env.CHANNEL, getRandomResponse(splitMessage[1], tags.username, cost));
   removePoints([{ id: tags['user-id'], name: tags.username }], cost);
 };
 
