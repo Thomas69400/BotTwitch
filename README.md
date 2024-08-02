@@ -19,16 +19,19 @@ Bot Twitch pour gérer des messages, des commandes et un système de points avan
 ```ruby
 CLIENTID = x # L'id Client (dev.twitch.tv)
 SECRET = x # Le Secret (dev.twitch.tv)
-TOKEN_OAUTH = x # token récupéré via l'oauth Twitch
+
 CHANNEL = x  # la chaîne twitch ou le bot va
+BROADCASTER_ID =
+REFRESH_TOKEN_BROADCASTER =
+CODE_BROADCASTER =
 
-# Timers: valeur en millisecondes
-TIMER_ADD_POINTS = 10000
-SAVE_POINTS = 10000
-
-RAFFLE_WIN_RATIO =
-BROADCASTER_ID = 644753700
 BOT_ID = 1119604558
+REFRESH_TOKEN_BOT =
+CODE_BOT =
+
+
+#RAFFLE WIN RATIO
+RAFFLE_WIN_RATIO = 33
 ```
 
 .env.development
@@ -36,7 +39,11 @@ BOT_ID = 1119604558
 ```ruby
 LIVE_REQUIERED = false
 POINTS_JSON = points.dev.json
+
 TIMER_RAFFLE =
+TIMER_ADD_POINTS =
+
+TIMEOUT_BASE_COST =
 ```
 
 .env.production
@@ -44,7 +51,11 @@ TIMER_RAFFLE =
 ```ruby
 LIVE_REQUIERED = true
 POINTS_JSON = points.json
+
 TIMER_RAFFLE =
+TIMER_ADD_POINTS =
+
+TIMEOUT_BASE_COST =
 ```
 
 .env.test
