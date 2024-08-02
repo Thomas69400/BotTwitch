@@ -48,7 +48,6 @@ export const checkViewers = (tags) => {
   if (!viewers[tags['user-id']]) {
     viewers[tags['user-id']] = {
       id: tags['user-id'],
-      login: tags.username,
       name: tags.username,
       points: 0,
       lastActive: new Date(),
