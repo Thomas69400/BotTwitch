@@ -46,8 +46,7 @@ client.on('message', async (channel, tags, message, self) => {
   const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
 
   // Fonctions
-  if (trunkMessage.startsWith('!raffle'))
-    startRaffle(client, tags, message.replace(amountRegex, ''));
+  if (message.startsWith('!raffle')) startRaffle(client, tags, message.replace(amountRegex, ''));
   if (message.startsWith('!cancel')) cancelRaffle(client, tags);
   if (message.startsWith('!join')) joinRaffle(tags);
   if (message.startsWith('!help')) client.say(process.env.CHANNEL, commandes());
@@ -55,6 +54,7 @@ client.on('message', async (channel, tags, message, self) => {
     timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
 
   // Check For
+  // TODO BUG SI LA PERSONNE ENVOI UN PREMIER MESSAGE IL OBTIENT UN COOLDOWN MEME SI C'EST PAS UN QUOI QUI POURQUOI
   if (!checkCooldown(tags['user-id'])) {
     checkForPourquoi(client, channel, trunkMessage, tags);
     checkForQuoi(client, channel, trunkMessage, tags);
