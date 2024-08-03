@@ -31,8 +31,8 @@ export const getOauthToken = async (forBot) => {
  * Envoie d'une requête à l'API twitch pour récupérer chaînes en live et voir si notre stream l'est
  * @return {Object} la requête passée
  */
-export const isNotOnLive = async () => {
-  console.log('in service isNotOnLive');
+export const getLive = async () => {
+  console.log('in service getLive');
 
   const accesToken = await getOauthToken(true);
   const url = `https://api.twitch.tv/helix/streams?user_login=${process.env.CHANNEL}`;
@@ -42,6 +42,6 @@ export const isNotOnLive = async () => {
     const response = await axios.get(url, { headers });
     return response.data.data;
   } catch (error) {
-    console.error('Error dans isNotOnLive:', error);
+    console.error('Error dans getLive:', error);
   }
 };

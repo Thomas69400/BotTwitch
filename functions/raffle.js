@@ -1,4 +1,4 @@
-import { isNotOnLive } from '../services/auth.js';
+import { getLive } from '../services/auth.js';
 import { addPoints } from './points.js';
 import { checkRole, shuffleArray, sleep, toBoolean, roundNumber } from './utils.js';
 
@@ -16,7 +16,7 @@ let numberRaffle = 0;
 export const startRaffle = async (client, tags, amount) => {
   if (raffleStatus) return; // Si un raffle est déjà en cours
   if (toBoolean(process.env.LIVE_REQUIERED)) {
-    const isOnLive = await isNotOnLive();
+    const isOnLive = await getLive();
     if (isOnLive.length === 0) return;
   }
   if (checkRole(tags) === 0) return;
@@ -68,7 +68,7 @@ export const begForRaffle = async (client) => {
       (Number(process.env.RANDOM_RAFFLE_MAX) - Number(process.env.RANDOM_RAFFLE_MIN)) +
       Number(process.env.RANDOM_RAFFLE_MIN),
   );
-  const isLive = await isNotOnLive();
+  const isLive = await getLive();
   if (isLive.length === 0) return;
   const liveStartedAt = new Date(isLive[0]['started_at']);
   const now = new Date();

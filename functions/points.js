@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { isNotOnLive } from '../services/auth.js';
+import { getLive } from '../services/auth.js';
 import { toBoolean } from './utils.js';
 
 let viewers = {};
@@ -27,17 +27,10 @@ export const readFile = () => {
 
 /**
  * Retourne la liste des viewers
- * @returns
+ * @returns {Object} l'objet contenant les viewers et leurs points
  */
 export const getViewers = () => {
   return viewers;
-};
-
-/**
- * Remet la liste des viewers vide
- */
-export const resetViewers = () => {
-  viewers = {};
 };
 
 /**
@@ -56,6 +49,7 @@ export const checkViewers = (tags) => {
     // Mettre à jour le temps de la dernière activité
     viewers[tags['user-id']].lastActive = new Date();
   }
+  savePoints();
 };
 
 /**
@@ -63,18 +57,19 @@ export const checkViewers = (tags) => {
  * @returns
  */
 export const activeRevenue = async () => {
-  if (toBoolean(process.env.LIVE_REQUIERED)) if (await isNotOnLive()) return;
-
+  if (toBoolean(process.env.LIVE_REQUIERED)) if (await getLive()) return;
   const now = new Date();
+  const activeViewers = [];
 
-  for (const [data] of Object.entries(viewers)) {
+  Object.values(viewers).forEach((data) => {
     const timeDiff = (now - new Date(data.lastActive)) / 1000 / 60; // Temps en minutes
 
     // Si le spectateur a été actif dans les 5 dernières minutes
     if (timeDiff < 5) {
-      data.points += 10; // Par exemple, 10 points toutes les 5 minutes
+      activeViewers.push(data);
     }
-  }
+  });
+  addPoints(activeViewers, 10);
 };
 
 /**
@@ -138,4 +133,15 @@ export const getIdViewerByName = (name) => {
       return id;
     }
   }
+};
+
+/**
+ * Réassign les valeurs des viewers
+ * UNIQUEMENT UTILISER POUR LES TESTS
+ * @param {Object} newValues Les viewers à réassigner
+ * @returns {void}
+ */
+export const reassignViewers = (newValues) => {
+  if (newValues) viewers = { ...newValues };
+  else viewers = {};
 };
