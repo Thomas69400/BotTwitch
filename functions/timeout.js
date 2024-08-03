@@ -6,7 +6,7 @@ import { serviceWhisper } from '../services/whisper.js';
 
 // name1 = userToTimeout name2 = buyer
 const timeoutResponses = [
-  '<name2> a trahis la confiance de <name1>',
+  '<name2> a trahi la confiance de <name1>',
   "<name2> a renvoyé <name1> à l'état de sans-éclat.",
   "<name2> a payé <montant> pour que <name1> ne fasse plus parti de la commu. C'est sad. PRANKEX",
   'AHAHAH mange ton caca <name1> :index_pointing_at_the_viewer: :face_with_hand_over_mouth: - signé <name2>',
@@ -57,10 +57,10 @@ export const timeout = async (client, channel, tags, message) => {
     userToTimeout = [{ id: isViewerHere }];
   }
 
-  const response = await serviceTimeout(userToTimeout[0]['id'], time * 60, tags.username);
+  const responseTimeout = await serviceTimeout(userToTimeout[0]['id'], time * 60, tags.username);
 
-  if (response !== 200) {
-    handleTimeoutError(response, client, channel, tags.id);
+  if (responseTimeout !== 200) {
+    handleTimeoutError(responseTimeout, client, channel, tags.id);
     return;
   }
 
@@ -73,7 +73,7 @@ export const timeout = async (client, channel, tags, message) => {
  * Retourne une phrase contenant les bons noms de utilisateurs associès à la requête
  * @param {string} userToTimeout Nom de la personne qui se fait timeout
  * @param {string} buyer Nom de la personne qui a acheté la récompense
- * @param {string} montant Nom de la personne qui a acheté la récompense
+ * @param {string} montant optionnel Nom de la personne qui a acheté la récompense
  * @returns {string} texte que le bot va renvoyer
  */
 const getRandomResponse = (userToTimeout, buyer, montant) => {
