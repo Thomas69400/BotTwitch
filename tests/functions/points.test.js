@@ -14,7 +14,6 @@ import {
 import { toBoolean } from '../../functions/utils.js';
 import { getLive } from '../../services/auth.js';
 
-// Mock fs functions
 jest.mock('fs');
 jest.mock('../../functions/utils.js');
 jest.mock('../../services/auth');
@@ -33,7 +32,20 @@ describe('Points Service', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    reassignViewers();
+    reassignViewers(); // Réinitialiser les viewers
+  });
+
+  test('should update lastActive if viewer exists', async () => {
+    const tags = { 'user-id': '1', username: 'John' };
+    checkViewers(tags);
+    const initialDate = getViewers()['1'].lastActive;
+
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Attendre 1 seconde
+
+    checkViewers(tags);
+    const updatedDate = getViewers()['1'].lastActive;
+
+    expect(updatedDate).not.toEqual(initialDate);
   });
 
   describe('readFile', () => {
@@ -54,11 +66,9 @@ describe('Points Service', () => {
             id: '1',
             name: 'John',
             points: 10,
-            lastActive: expect.any(String), // Vérifie que c'est une chaîne de caractères
+            lastActive: expect.any(String),
           },
         });
-
-        // Vérifie que la chaîne de caractères est bien une date au format ISO 8601
         expect(new Date(viewers['1'].lastActive).toISOString()).toEqual(viewers['1'].lastActive);
         done();
       });
@@ -96,6 +106,22 @@ describe('Points Service', () => {
       );
       expect(getViewers()).toEqual({});
     });
+
+    test('should handle unexpected error', () => {
+      fs.readFile.mockImplementation((path, encoding, callback) => {
+        const err = new Error('Unexpected error');
+        callback(err);
+      });
+
+      console.error = jest.fn();
+
+      readFile();
+
+      expect(console.error).toHaveBeenCalledWith(
+        'Erreur lors du chargement des points:',
+        new Error('Unexpected error'),
+      );
+    });
   });
 
   describe('checkViewers', () => {
@@ -126,7 +152,7 @@ describe('Points Service', () => {
 
         expect(updatedDate).not.toEqual(initialDate);
         done();
-      }, 1000); // Délai de 1 seconde pour s'assurer que la date change
+      }, 1000);
     });
   });
 
@@ -141,19 +167,17 @@ describe('Points Service', () => {
       await activeRevenue();
 
       const updatedPoints = getViewers()['1'].points;
-
       expect(updatedPoints).toBeGreaterThan(initialPoints);
     });
 
     test('should not add points if viewer not active within 5 minutes', async () => {
       toBoolean.mockReturnValue(false);
 
-      // Manually update lastActive to be more than 5 minutes ago
       reassignViewers({
         1: {
-          'user-id': '1',
-          username: 'John',
-          points: '10',
+          id: '1',
+          name: 'John',
+          points: 10,
           lastActive: new Date(Date.now() - 6 * 60000),
         },
       });
@@ -165,28 +189,37 @@ describe('Points Service', () => {
       const updatedPoints = getViewers()['1'].points;
       expect(updatedPoints).toEqual(initialPoints);
     });
+
+    test('should not add points if live is required and getLive returns true', async () => {
+      toBoolean.mockReturnValue(true);
+      getLive.mockResolvedValue(true);
+
+      await activeRevenue();
+
+      expect(getLive).toHaveBeenCalled();
+    });
   });
 
   describe('addPoints', () => {
-    test('should add points to specified viewers', () => {
+    test('should handle adding negative points', () => {
       const tags = { 'user-id': '1', username: 'John' };
       checkViewers(tags);
 
-      addPoints([{ id: '1' }], 50);
+      addPoints([{ id: '1' }], -30);
 
-      expect(getViewers()['1'].points).toEqual(50);
+      expect(getViewers()['1'].points).toEqual(-30);
     });
   });
 
   describe('removePoints', () => {
-    test('should remove points from specified viewers', () => {
+    test('should handle removing negative points', () => {
       const tags = { 'user-id': '1', username: 'John' };
       checkViewers(tags);
-
       addPoints([{ id: '1' }], 50);
-      removePoints([{ id: '1' }], 20);
 
-      expect(getViewers()['1'].points).toEqual(30);
+      removePoints([{ id: '1' }], -20);
+
+      expect(getViewers()['1'].points).toEqual(70); // Points totaux devraient être 50 + 20
     });
   });
 
@@ -204,6 +237,11 @@ describe('Points Service', () => {
         lastActive: expect.any(Date),
       });
     });
+
+    test('should return undefined for non-existent viewer id', () => {
+      const viewer = getViewer('999');
+      expect(viewer).toBeUndefined();
+    });
   });
 
   describe('getIdViewerByName', () => {
@@ -214,6 +252,11 @@ describe('Points Service', () => {
       const id = getIdViewerByName('John');
 
       expect(id).toEqual('1');
+    });
+
+    test('should return undefined for non-existent viewer name', () => {
+      const id = getIdViewerByName('NonExistent');
+      expect(id).toBeUndefined();
     });
   });
 
@@ -231,6 +274,52 @@ describe('Points Service', () => {
         JSON.stringify(viewers, null, 2),
         expect.any(Function),
       );
+    });
+
+    test('should handle save error', () => {
+      fs.writeFile.mockImplementation((path, data, callback) => {
+        callback(new Error('Save Error'));
+      });
+
+      console.error = jest.fn();
+
+      savePoints();
+
+      expect(console.error).toHaveBeenCalledWith(
+        'Erreur lors de la sauvegarde des points:',
+        new Error('Save Error'),
+      );
+    });
+  });
+
+  describe('addPoints and removePoints edge cases', () => {
+    test('should handle adding points to viewers who don’t exist', () => {
+      addPoints([{ id: 'non-existent-id' }], 50);
+      const viewer = getViewers()['non-existent-id'];
+      expect(viewer).toBeDefined();
+      expect(viewer.points).toEqual(50);
+    });
+
+    test('should handle removing points to viewers who don’t exist', () => {
+      removePoints([{ id: 'non-existent-id' }], 50);
+      const viewer = getViewers()['non-existent-id'];
+      expect(viewer).toBeDefined();
+      expect(viewer.points).toEqual(-50);
+    });
+  });
+
+  // Exemple pour getIdViewerByName
+  describe('getIdViewerByName edge cases', () => {
+    test('should return undefined for a non-existent viewer name', () => {
+      const id = getIdViewerByName('NonExistentName');
+      expect(id).toBeUndefined();
+    });
+
+    test('should return the correct viewer id by name', () => {
+      const tags = { 'user-id': '1', username: 'John' };
+      checkViewers(tags);
+      const id = getIdViewerByName('John');
+      expect(id).toEqual('1');
     });
   });
 });

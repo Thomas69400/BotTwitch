@@ -74,32 +74,52 @@ export const activeRevenue = async () => {
 
 /**
  * Ajoute des points aux utilisateurs
- * @param {Tableau d'objet} winners Tableau d'objet des personnes qui gagnent des points. Doit contenir au moins id
- * @param {String} points les points gagnés
+ * @param {Object[]} winners Tableau d'objet des personnes qui gagnent des points. Doit contenir au moins id
+ * @param {string} points les points gagnés
  */
 export const addPoints = (winners, points) => {
+  points = Number(points); // Convertir en nombre
   winners.forEach((winner) => {
-    const oldData = viewers[winner.id];
-    viewers[winner.id] = {
-      ...oldData,
-      points: points + oldData.points,
-    };
+    if (!viewers[winner.id]) {
+      viewers[winner.id] = {
+        id: winner.id,
+        name: 'Unknown',
+        points: points,
+        lastActive: new Date(),
+      };
+    } else {
+      const oldData = viewers[winner.id];
+      viewers[winner.id] = {
+        ...oldData,
+        points: oldData.points + points,
+      };
+    }
   });
   savePoints();
 };
 
 /**
  * Retire des points aux utilisateurs
- * @param {Tableau d'objet} loser Tableau d'objet des personnes qui perdent des points. Doit contenir au moins id
- * @param {String} points le nombre de points perdus
+ * @param {Object[]} loser Tableau d'objet des personnes qui perdent des points. Doit contenir au moins id
+ * @param {string} points le nombre de points perdus
  */
 export const removePoints = (losers, points) => {
+  points = Number(points); // Convertir en nombre
   losers.forEach((loser) => {
-    const oldData = viewers[loser.id];
-    viewers[loser.id] = {
-      ...oldData,
-      points: oldData.points - points,
-    };
+    if (!viewers[loser.id]) {
+      viewers[loser.id] = {
+        id: loser.id,
+        name: 'Unknown',
+        points: -points,
+        lastActive: new Date(),
+      };
+    } else {
+      const oldData = viewers[loser.id];
+      viewers[loser.id] = {
+        ...oldData,
+        points: oldData.points - points,
+      };
+    }
   });
   savePoints();
 };
@@ -115,7 +135,7 @@ export const savePoints = () => {
 
 /**
  * Retourne un viewer avec ses points grâce à son id
- * @param {Number} id
+ * @param {number} id
  * @returns viewer
  */
 export const getViewer = (id) => {

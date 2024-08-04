@@ -5,141 +5,136 @@ import {
   checkForPourquoi,
   checkForQuoi,
   checkForQui,
+  resetCooldowns,
+  getCooldownTime,
 } from '../../functions/whoWhyWhat.js';
 
+// Mock de la fonction randomInt pour contrôler les réponses aléatoires
 jest.mock('crypto', () => ({
   randomInt: jest.fn(),
 }));
 
-describe('Tests pour les fonctions de réponse', () => {
+describe('whoWhyWhat function', () => {
+  let client, channel, tags;
+  const COOLDOWN_TIME = 600000;
+
   beforeEach(() => {
+    client = {
+      reply: jest.fn(),
+    };
+    channel = 'testChannel';
+    resetCooldowns();
     jest.clearAllMocks();
-    jest.useFakeTimers();
+  });
+  describe('deleteEmptyWords', () => {
+    test('should remove empty words and reverse the array', () => {
+      const input = ['', 'hello', '', 'world', ''];
+      const expectedOutput = ['world', 'hello'];
+      expect(deleteEmptyWords(input)).toEqual(expectedOutput);
+    });
   });
 
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+  describe('checkCooldown', () => {
+    test('should return false and set cooldown for a user who is not in cooldown', () => {
+      const userId = 1;
+      expect(checkCooldown(userId)).toBe(false);
+      expect(checkCooldown(userId)).toBe(true);
+    });
+
+    test('should return true if user is in cooldown', () => {
+      const userId = 2;
+      checkCooldown(userId);
+      expect(checkCooldown(userId)).toBe(true);
+    });
+
+    test('should return false if cooldown has expired', () => {
+      const userId = 3;
+      checkCooldown(userId);
+      jest.spyOn(Date, 'now').mockImplementation(() => new Date().getTime() + COOLDOWN_TIME + 1);
+      expect(checkCooldown(userId)).toBe(false);
+    });
   });
 
-  test('deleteEmptyWords filtre et inverse les mots correctement', () => {
-    const words = ['hello', 'world', '', 'test'];
-    const result = deleteEmptyWords(words);
+  describe('checkForPourquoi', () => {
+    test('should reply with a random response if message ends with "pourquoi"', () => {
+      const message = 'Pourquoi';
+      const tags = { 'user-id': 1, id: 'msg-id' };
+      randomInt.mockReturnValue(0);
 
-    expect(result).toEqual(['test', 'world', 'hello']);
+      checkForPourquoi(client, channel, message, tags);
+      expect(client.reply).toHaveBeenCalledWith(
+        channel,
+        'Tout simplement pour feur Pepega Pepega',
+        'msg-id',
+      );
+    });
+
+    test('should not reply if user is in cooldown', () => {
+      const message = 'Pourquoi';
+      const tags = { 'user-id': 2, id: 'msg-id' };
+
+      checkForPourquoi(client, channel, message, tags);
+      checkForPourquoi(client, channel, message, tags);
+      expect(client.reply).toHaveBeenCalledTimes(1);
+    });
   });
 
-  test('checkCooldown ne devrait pas déclencher le cooldown pour un nouvel utilisateur', () => {
-    const user = 'user1';
-    // Appel initial, l'utilisateur n'est pas encore en cooldown
-    const result = checkCooldown(user);
-    expect(result).toBe(false); // Le premier appel ne doit pas déclencher le cooldown
+  describe('checkForQuoi', () => {
+    test('should reply with a random response if message ends with "quoi"', () => {
+      const message = 'Quoi';
+      const tags = { 'user-id': 1, id: 'msg-id' };
+      randomInt.mockReturnValue(0);
+
+      checkForQuoi(client, channel, message, tags);
+      expect(client.reply).toHaveBeenCalledWith(channel, 'FEUR !!!!!', 'msg-id');
+    });
+
+    test('should not reply if user is in cooldown', () => {
+      const message = 'Quoi';
+      const tags = { 'user-id': 2, id: 'msg-id' };
+
+      checkForQuoi(client, channel, message, tags);
+      checkForQuoi(client, channel, message, tags);
+      expect(client.reply).toHaveBeenCalledTimes(1);
+    });
   });
 
-  test('checkCooldown devrait déclencher le cooldown pour un utilisateur pendant la période de cooldown', () => {
-    const user = 'user2';
-    // Simuler que l'utilisateur a déjà répondu
-    checkCooldown(user); // Initialise le temps de cooldown pour l'utilisateur
+  describe('checkForQui', () => {
+    test('should reply with a random response if message ends with "qui"', () => {
+      const message = 'Qui';
+      const tags = { 'user-id': 1, id: 'msg-id' };
+      randomInt.mockReturnValue(0);
 
-    // Avancer le temps de moitié du cooldown pour simuler le passage du temps
-    jest.advanceTimersByTime((10 * 60 * 1000) / 2);
+      checkForQui(client, channel, message, tags);
+      expect(client.reply).toHaveBeenCalledWith(
+        channel,
+        'Quette ou bien kette tel est la question :thinking:',
+        'msg-id',
+      );
+    });
 
-    const result = checkCooldown(user);
-    expect(result).toBe(true); // L'utilisateur devrait être en cooldown
+    test('should not reply if user is in cooldown', () => {
+      const message = 'Qui';
+      const tags = { 'user-id': 2, id: 'msg-id' };
+
+      checkForQui(client, channel, message, tags);
+      checkForQui(client, channel, message, tags);
+      expect(client.reply).toHaveBeenCalledTimes(1);
+    });
   });
 
-  test('checkCooldown ne devrait pas déclencher le cooldown pour un utilisateur après que la période de cooldown soit écoulée', () => {
-    const user = 'user3';
-    // Simuler que l'utilisateur a déjà répondu
-    checkCooldown(user); // Initialise le temps de cooldown pour l'utilisateur
-
-    // Avancer le temps au-delà de la période de cooldown
-    jest.advanceTimersByTime(10 * 60 * 1000 + 1000);
-
-    const result = checkCooldown(user);
-    expect(result).toBe(false); // L'utilisateur ne devrait pas être en cooldown
+  describe('resetCooldowns', () => {
+    test('should reset all cooldowns', () => {
+      const userId = 1;
+      checkCooldown(userId);
+      resetCooldowns();
+      expect(checkCooldown(userId)).toBe(false);
+    });
   });
 
-  test('checkForPourquoi répond avec une réponse appropriée', () => {
-    const client = { reply: jest.fn() };
-    const channel = 'testChannel';
-    const tags = { username: '123', id: '123' };
-
-    // Mock de randomInt pour retourner une valeur fixe
-    randomInt.mockReturnValue(0);
-
-    checkForPourquoi(client, channel, 'blablabla pourquoi', tags);
-
-    expect(client.reply).toHaveBeenCalledWith(
-      channel,
-      'Tout simplement pour feur Pepega Pepega',
-      '123',
-    );
-  });
-
-  test('checkForQuoi répond avec une réponse appropriée', () => {
-    const client = { reply: jest.fn() };
-    const channel = 'testChannel';
-    const tags = { username: '123', id: '123' };
-
-    // Mock de randomInt pour retourner une valeur fixe
-    randomInt.mockReturnValue(0);
-
-    checkForQuoi(client, channel, 'ya quoi', tags);
-
-    expect(client.reply).toHaveBeenCalledWith(channel, 'FEUR !!!!!', '123');
-  });
-
-  test('checkForQui répond avec une réponse appropriée', () => {
-    const client = { reply: jest.fn() };
-    const channel = 'testChannel';
-    const tags = { username: '123', id: '123' };
-
-    // Mock de randomInt pour retourner une valeur fixe
-    randomInt.mockReturnValue(0);
-
-    checkForQui(client, channel, 'c est qui', tags);
-
-    expect(client.reply).toHaveBeenCalledWith(
-      channel,
-      'Quette ou bien kette tel est la question :thinking:',
-      '123',
-    );
-  });
-
-  test('checkForPourquoi ne répond pas si le cooldown est actif', () => {
-    const client = { reply: jest.fn() };
-    const channel = 'testChannel';
-    const tags = { username: '123', id: '123' };
-
-    // Simuler que le cooldown est actif
-    checkCooldown(tags.id);
-    if (!checkCooldown(tags.id)) checkForPourquoi(client, channel, 'pourquoi', tags);
-
-    expect(client.reply).not.toHaveBeenCalled();
-  });
-
-  test('checkForQuoi ne répond pas si le cooldown est actif', () => {
-    const client = { reply: jest.fn() };
-    const channel = 'testChannel';
-    const tags = { username: '123', id: '123' };
-
-    // Simuler que le cooldown est actif
-    checkCooldown(tags.id);
-    if (!checkCooldown(tags.id)) checkForQuoi(client, channel, 'Quoi de neuf ?', tags);
-
-    expect(client.reply).not.toHaveBeenCalled();
-  });
-
-  test('checkForQui ne répond pas si le cooldown est actif', () => {
-    const client = { reply: jest.fn() };
-    const channel = 'testChannel';
-    const tags = { username: '123', id: '123' };
-
-    // Simuler que le cooldown est actif
-    checkCooldown(tags.id);
-    if (!checkCooldown(tags.id)) checkForQui(client, channel, 'Qui est là ?', tags);
-
-    expect(client.reply).not.toHaveBeenCalled();
+  describe('getCooldownTime', () => {
+    test('should return the cooldown time', () => {
+      expect(getCooldownTime()).toBe(600000);
+    });
   });
 });

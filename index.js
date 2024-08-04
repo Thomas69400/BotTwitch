@@ -54,12 +54,10 @@ client.on('message', async (channel, tags, message, self) => {
     timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
 
   // Check For
-  // TODO BUG SI LA PERSONNE ENVOI UN PREMIER MESSAGE IL OBTIENT UN COOLDOWN MEME SI C'EST PAS UN QUOI QUI POURQUOI
-  if (!checkCooldown(tags['user-id'])) {
-    checkForPourquoi(client, channel, trunkMessage, tags);
-    checkForQuoi(client, channel, trunkMessage, tags);
-    checkForQui(client, channel, trunkMessage, tags);
-  }
+  checkForPourquoi(client, channel, trunkMessage, tags);
+  checkForQuoi(client, channel, trunkMessage, tags);
+  checkForQui(client, channel, trunkMessage, tags);
+
   if (containtBeg.test(message) && containtRaffle.test(message)) {
     begForRaffle(client, tags, message);
   }
