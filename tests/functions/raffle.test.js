@@ -1,16 +1,20 @@
-import { addPoints } from '../functions/points.js';
+import { addPoints } from '../../functions/points.js';
 import {
   begForRaffle,
   cancelRaffle,
   getRaffleParticipants,
   getRaffleStatus,
-} from '../../functions/raffle';
-import { shuffleArray, checkRole } from '../../functions/utils';
-import { addPoints } from '../../functions/points';
+  joinRaffle,
+  resetRaffleParticipants,
+  resetRaffleStatus,
+  startRaffle,
+} from '../../functions/raffle.js';
+import { checkRole, shuffleArray, sleep, toBoolean } from '../../functions/utils.js';
+import { getLive } from '../../services/auth.js';
 
-jest.mock('../../functions/utils');
-jest.mock('../../functions/points');
-jest.mock('../../auth');
+jest.mock('../../functions/utils.js');
+jest.mock('../../functions/points.js');
+jest.mock('../../services/auth.js');
 
 describe('Raffle Functions', () => {
   let client;
