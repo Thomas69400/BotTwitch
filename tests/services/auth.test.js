@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getOauthToken, getLive } from '../services/auth.js'; // Remplacez './service' par le chemin correct vers votre fichier
+import { getOauthToken, getLive } from '../../services/auth.js';
 
 jest.mock('axios');
 

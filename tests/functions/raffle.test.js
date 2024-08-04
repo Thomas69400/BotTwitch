@@ -7,13 +7,13 @@ import {
   resetRaffleStatus,
   getViewersRaffleInfo,
   getRaffleStatus,
-} from '../functions/raffle';
-import { shuffleArray, checkRole } from '../functions/utils';
-import { addPoints } from '../functions/points';
+} from '../../functions/raffle';
+import { shuffleArray, checkRole } from '../../functions/utils';
+import { addPoints } from '../../functions/points';
 
-jest.mock('../functions/utils');
-jest.mock('../functions/points');
-jest.mock('../auth');
+jest.mock('../../functions/utils');
+jest.mock('../../functions/points');
+jest.mock('../../auth');
 
 describe('Raffle Functions', () => {
   let client;
