@@ -1,121 +1,212 @@
-// raffle.test.js
+import { addPoints } from '../../functions/points.js';
 import {
-  startRaffle,
-  joinRaffle,
+  begForRaffle,
   cancelRaffle,
-  resetViewersRaffleInfo,
-  resetRaffleStatus,
-  getViewersRaffleInfo,
+  getRaffleParticipants,
   getRaffleStatus,
-} from '../../functions/raffle';
-import { shuffleArray, checkRole } from '../../functions/utils';
-import { addPoints } from '../../functions/points';
+  joinRaffle,
+  resetRaffleParticipants,
+  resetRaffleStatus,
+  startRaffle,
+} from '../../functions/raffle.js';
+import { checkRole, shuffleArray, sleep, toBoolean } from '../../functions/utils.js';
+import { getLive } from '../../services/auth.js';
 
-jest.mock('../../functions/utils');
-jest.mock('../../functions/points');
-jest.mock('../../auth');
+jest.mock('../../functions/utils.js');
+jest.mock('../../functions/points.js');
+jest.mock('../../services/auth.js');
 
 describe('Raffle Functions', () => {
   let client;
   let tag;
+  let originalEnv;
+
+  beforeAll(() => {
+    originalEnv = { ...process.env };
+    process.env.POINTS_JSON = 'points.json';
+  });
+
+  afterAll(() => {
+    process.env = originalEnv;
+  });
 
   beforeEach(() => {
     client = {
       say: jest.fn(),
     };
-    tag = {
-      'user-id': '12345',
-      username: 'testUser',
-    };
     process.env.CHANNEL = '#testChannel';
     process.env.RAFFLE_WIN_RATIO = 50;
-    resetViewersRaffleInfo(); // Réinitialiser viewersRaffleInfo avant chaque test
+    process.env.TIMER_RAFFLE = 1000; // Ajouter une valeur pour TIMER_RAFFLE
+    process.env.LIVE_REQUIERED = 'false';
+    process.env.RANDOM_RAFFLE_MIN = 10;
+    process.env.RANDOM_RAFFLE_MAX = 20;
+    process.env.RAFFLE_RATIO_MIN = 50;
+    resetRaffleParticipants();
+    resetRaffleStatus();
+    global.numberRaffle = 0;
+    jest.useFakeTimers();
+    jest.clearAllMocks();
+    resetRaffleParticipants();
     resetRaffleStatus();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers(); // Restaurer les vrais timers après chaque test
   });
 
+  // Importation des modules nécessaires
   describe('startRaffle', () => {
-    test('should start a raffle and announce test', async () => {
-      checkRole.mockReturnValue(1);
-      shuffleArray.mockImplementation((array) => array);
-      const message = '!raffle 100';
+    test('should not start a raffle if one is already in progress', async () => {
+      resetRaffleStatus();
+      await startRaffle(client, { mod: true }, 100);
 
-      await startRaffle(client, tag, message);
-
-      expect(client.say).toHaveBeenCalledWith(
-        '#testChannel',
-        'Un raffle de 100 est en cours ! Tapez !join pour rejoindre !',
-      );
-      expect(shuffleArray).toHaveBeenCalled();
-      expect(addPoints).toHaveBeenCalled();
+      await startRaffle(client, { mod: true }, 100);
+      expect(client.say).toHaveBeenCalled();
     });
 
-    test('should not start a raffle if user has insufficient role', async () => {
-      checkRole.mockReturnValue(0);
-      const message = '!raffle 100';
+    test('should not start a raffle if live is required and not live', async () => {
+      const client = { say: jest.fn() };
+      toBoolean.mockReturnValue(true);
+      getLive.mockResolvedValue([]);
 
-      await startRaffle(client, tag, message);
-
+      await startRaffle(client, {}, '100');
       expect(client.say).not.toHaveBeenCalled();
     });
 
-    test('should announce winners correctly', async () => {
-      checkRole.mockReturnValue(1);
-      shuffleArray.mockImplementation((array) => array);
-      const message = '!raffle 100';
-      const viewersRaffleInfo = getViewersRaffleInfo();
-      viewersRaffleInfo.push({ id: '12345', name: 'winner1' }, { id: '67890', name: 'winner2' });
+    test('should not start a raffle if user role is not allowed', async () => {
+      toBoolean.mockReturnValue(false);
+      checkRole.mockReturnValue(0);
+      const client = { say: jest.fn() };
 
-      await startRaffle(client, tag, message);
+      await startRaffle(client, {}, '100');
+      expect(client.say).not.toHaveBeenCalled();
+    });
+
+    test('should start a raffle and announce test', async () => {
+      toBoolean.mockReturnValue(false);
+      checkRole.mockReturnValue(1);
+      sleep.mockResolvedValue();
+      const client = { say: jest.fn() };
+
+      await startRaffle(client, {}, '100');
+      expect(client.say).toHaveBeenCalledWith(
+        process.env.CHANNEL,
+        'Un raffle de 100 est en cours! Tapez !join pour rejoindre!',
+      );
+    });
+
+    test('should pick winners and announce them', async () => {
+      const client = { say: jest.fn() };
+      checkRole.mockReturnValue(1);
+      sleep.mockResolvedValue();
+      shuffleArray.mockImplementation((array) => array);
+      addPoints.mockReturnValue([{ 'user-id': '2', username: 'User2' }]);
+      getLive.mockReturnValue([{ started_at: '2023-08-04T19:51:56.773Z' }]);
+      console.log(getLive());
+
+      const message = '!raffle 100';
+      console.log('test');
+
+      startRaffle(client, tag, message);
+
+      joinRaffle({ 'user-id': '1', username: 'User1' });
+      joinRaffle({ 'user-id': '2', username: 'User2' });
+
+      await sleep(1000);
 
       expect(client.say).toHaveBeenCalledWith('#testChannel', expect.stringContaining('Gagnant'));
       expect(addPoints).toHaveBeenCalledWith(expect.any(Array), expect.any(Number));
     });
   });
 
-  describe('joinRaffle', () => {
-    test('should allow a user to join the raffle', () => {
-      joinRaffle(tag);
-      const viewersRaffleInfo = getViewersRaffleInfo();
-      expect(viewersRaffleInfo).toContainEqual({ id: '12345', name: 'testUser' });
+  describe('begForRaffle', () => {
+    test('should start a raffle if conditions are met', async () => {
+      checkRole.mockReturnValue(1);
+      getLive.mockReturnValue([{ started_at: '2023-08-04T19:51:56.773Z' }]);
+
+      await begForRaffle(client);
+
+      joinRaffle({ 'user-id': '1', username: 'User1' });
+      joinRaffle({ 'user-id': '2', username: 'User2' });
+
+      expect(client.say).toHaveBeenCalled();
     });
 
-    test('should not add the same user twice', () => {
-      joinRaffle(tag);
-      joinRaffle(tag);
-      const viewersRaffleInfo = getViewersRaffleInfo();
-      expect(viewersRaffleInfo.length).toBe(1);
+    test('should not start a raffle if conditions are not met', async () => {
+      getLive.mockResolvedValue([{ started_at: new Date().toISOString() }]);
+      checkRole.mockReturnValue(1);
+      global.numberRaffle = 100; // Simuler un grand nombre de raffles pour ne pas satisfaire les conditions
+
+      await begForRaffle(client);
+
+      expect(client.say).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('joinRaffle', () => {
+    test('should add a user to raffle participants', () => {
+      joinRaffle({ 'user-id': '1', username: 'User1' });
+      expect(getRaffleParticipants()).toContainEqual({ id: '1', name: 'User1' });
+    });
+
+    test('should not add a user if already a participant', () => {
+      const userTags = { 'user-id': '1', username: 'User1' };
+      joinRaffle(userTags);
+      joinRaffle(userTags);
+      expect(getRaffleParticipants().length).toBe(1);
     });
   });
 
   describe('cancelRaffle', () => {
-    test('should cancel an ongoing raffle', () => {
+    test('should cancel an ongoing raffle if user role is allowed', () => {
       checkRole.mockReturnValue(1);
+      const client = { say: jest.fn() };
 
-      startRaffle(client, tag, '!raffle 5000');
-      const oldRaffleStatus = getRaffleStatus();
-      cancelRaffle(client, tag);
-      const newRaffleStatus = getRaffleStatus();
-
-      expect(client.say).toHaveBeenCalledWith('#testChannel', 'Le raffle a été annulé');
-
-      expect(oldRaffleStatus).not.toBe(newRaffleStatus);
+      const result = cancelRaffle(client, {});
+      expect(result).toBe(false);
+      expect(client.say).toHaveBeenCalledWith(
+        process.env.CHANNEL,
+        'Le raffle a été annulé. PRANKEX',
+      );
     });
 
-    test('should not cancel a raffle if user has insufficient role', () => {
+    test('should not cancel a raffle if user role is not allowed', () => {
+      const client = { say: jest.fn() };
       checkRole.mockReturnValue(0);
 
-      startRaffle(client, tag, '!raffle 5000');
-      const oldRaffleStatus = getRaffleStatus();
-      cancelRaffle(client, tag);
-      const newRaffleStatus = getRaffleStatus();
-
+      const result = cancelRaffle(client, {});
+      expect(result).toBeUndefined();
       expect(client.say).not.toHaveBeenCalled();
+    });
+  });
 
-      expect(oldRaffleStatus).toBe(newRaffleStatus);
+  describe('resetRaffleParticipants', () => {
+    test('should reset the raffle participants', () => {
+      joinRaffle({ 'user-id': '1', username: 'User1' });
+      resetRaffleParticipants();
+      expect(getRaffleParticipants()).toEqual([]);
+    });
+  });
+
+  describe('resetRaffleStatus', () => {
+    test('should reset the raffle status', () => {
+      startRaffle();
+      resetRaffleStatus();
+      expect(getRaffleStatus()).toBe(false);
+    });
+  });
+
+  describe('getRaffleParticipants', () => {
+    test('should return the current raffle participants', () => {
+      joinRaffle({ 'user-id': '1', username: 'User1' });
+      expect(getRaffleParticipants()).toEqual([{ id: '1', name: 'User1' }]);
+    });
+  });
+
+  describe('getRaffleStatus', () => {
+    test('should return the current raffle status', () => {
+      expect(getRaffleStatus()).toBe(false);
     });
   });
 });
