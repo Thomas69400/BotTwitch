@@ -36,12 +36,11 @@ export const startRaffle = async (client, tags, amount) => {
   // et on pick les gagnants
   if (!raffleStatus) return;
   raffleStatus = false;
-  raffleParticipants = shuffleArray(raffleParticipants);
   if (raffleParticipants.length <= 0) {
     client.say(process.env.CHANNEL, `Personne n'a rejoint le raffle Smoge`);
     return;
   }
-
+  raffleParticipants = shuffleArray(raffleParticipants);
   const ratioWinner = Math.round((raffleParticipants.length * process.env.RAFFLE_WIN_RATIO) / 100)
     ? Math.round((raffleParticipants.length * process.env.RAFFLE_WIN_RATIO) / 100)
     : 1;
@@ -70,9 +69,11 @@ export const begForRaffle = async (client) => {
   );
   const isLive = await getLive();
   if (isLive.length === 0) return;
+
   const liveStartedAt = new Date(isLive[0]['started_at']);
   const now = new Date();
   const differenceInHour = Math.round((now - liveStartedAt) / 1000 / 60 / 60);
+
   if ((numberRaffle / differenceInHour) * 100 < process.env.RAFFLE_RATIO_MIN) {
     startRaffle(client, { mod: true }, value);
   }
