@@ -1,18 +1,17 @@
 import fs from 'fs';
 import {
-  readFile,
-  getViewers,
-  checkViewers,
   activeRevenue,
   addPoints,
+  checkViewers,
+  getIdViewerByName,
+  getViewer,
+  getViewers,
+  readFile,
+  reassignViewers,
   removePoints,
   savePoints,
-  getViewer,
-  getIdViewerByName,
-  reassignViewers,
 } from '../functions/points.js';
 import { toBoolean } from '../functions/utils.js';
-import { getLive } from '../services/auth';
 
 // Mock fs functions
 jest.mock('fs');
@@ -24,7 +23,7 @@ describe('Points Service', () => {
 
   beforeAll(() => {
     originalEnv = { ...process.env };
-    process.env.POINTS_JSON = 'points.json';
+    process.env.POINTS_JSON = 'points.test.json';
   });
 
   afterAll(() => {

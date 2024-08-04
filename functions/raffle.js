@@ -60,6 +60,7 @@ export const startRaffle = async (client, tags, amount) => {
 /**
  * Quand un utilisateur demande un raffle, le bot en lance un
  * @param {Object} client le client
+ * @returns {void} Ne retourne rien, start une raffle
  */
 export const begForRaffle = async (client) => {
   const value = roundNumber(
