@@ -1,4 +1,4 @@
-import { sleep, shuffleArray, checkRole } from '../functions/utils.js';
+import { sleep, shuffleArray, checkRole } from '../../functions/utils.js';
 
 describe('Fonctions Utils', () => {
   // Test de la fonction sleep

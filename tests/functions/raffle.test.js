@@ -4,17 +4,13 @@ import {
   cancelRaffle,
   getRaffleParticipants,
   getRaffleStatus,
-  joinRaffle,
-  resetRaffleParticipants,
-  resetRaffleStatus,
-  startRaffle,
-} from '../functions/raffle.js';
-import { checkRole, shuffleArray, sleep, toBoolean } from '../functions/utils.js';
-import { getLive } from '../services/auth.js';
+} from '../../functions/raffle';
+import { shuffleArray, checkRole } from '../../functions/utils';
+import { addPoints } from '../../functions/points';
 
-jest.mock('../functions/utils.js');
-jest.mock('../functions/points.js');
-jest.mock('../services/auth.js');
+jest.mock('../../functions/utils');
+jest.mock('../../functions/points');
+jest.mock('../../auth');
 
 describe('Raffle Functions', () => {
   let client;

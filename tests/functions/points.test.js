@@ -8,15 +8,14 @@ import {
   getViewers,
   readFile,
   reassignViewers,
-  removePoints,
-  savePoints,
-} from '../functions/points.js';
-import { toBoolean } from '../functions/utils.js';
+} from '../../functions/points.js';
+import { toBoolean } from '../../functions/utils.js';
+import { getLive } from '../../services/auth.js';
 
 // Mock fs functions
 jest.mock('fs');
-jest.mock('../functions/utils.js');
-jest.mock('../services/auth');
+jest.mock('../../functions/utils.js');
+jest.mock('../../services/auth');
 
 describe('Points Service', () => {
   let originalEnv;

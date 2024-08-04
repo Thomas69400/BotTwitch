@@ -5,7 +5,7 @@ import {
   checkForPourquoi,
   checkForQuoi,
   checkForQui,
-} from '../functions/whoWhyWhat.js';
+} from '../../functions/whoWhyWhat.js';
 
 jest.mock('crypto', () => ({
   randomInt: jest.fn(),
