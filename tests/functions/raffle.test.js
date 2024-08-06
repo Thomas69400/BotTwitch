@@ -103,10 +103,8 @@ describe('Raffle Functions', () => {
       shuffleArray.mockImplementation((array) => array);
       addPoints.mockReturnValue([{ 'user-id': '2', username: 'User2' }]);
       getLive.mockReturnValue([{ started_at: '2023-08-04T19:51:56.773Z' }]);
-      console.log(getLive());
 
       const message = '!raffle 100';
-      console.log('test');
 
       startRaffle(client, tag, message);
 

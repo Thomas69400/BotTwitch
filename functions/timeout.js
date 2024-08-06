@@ -14,9 +14,9 @@ const timeoutResponses = [
 
 /**
  * Timeout un utilisateur
- * @param {Client} client client
+ * @param {Object} client client
  * @param {Object} tags Les données de l'utilisateur
- * @param {String} message Le message de l'utilisateur
+ * @param {string} message Le message de l'utilisateur
  * @returns {void}
  */
 export const timeout = async (client, channel, tags, message) => {
@@ -25,7 +25,6 @@ export const timeout = async (client, channel, tags, message) => {
   let textWhisper = '';
 
   // séparation des arguments et vérifications
-  // TODO faire une fonction dynamique et réutilisable qui check les parametres de commandes (deux parametres un tableau avec les arguments et un autre pour les vérifier)
   const splitMessage = clearMessage(message).split(' ');
   if (typeof splitMessage[1] != 'string' || !isNumber.test(splitMessage[2]) || splitMessage[3]) {
     if (splitMessage.length === 1) {
@@ -73,7 +72,7 @@ export const timeout = async (client, channel, tags, message) => {
  * Retourne une phrase contenant les bons noms de utilisateurs associès à la requête
  * @param {string} userToTimeout Nom de la personne qui se fait timeout
  * @param {string} buyer Nom de la personne qui a acheté la récompense
- * @param {string} montant optionnel Nom de la personne qui a acheté la récompense
+ * @param {string} [montant] optionnel Nom de la personne qui a acheté la récompense
  * @returns {string} texte que le bot va renvoyer
  */
 const getRandomResponse = (userToTimeout, buyer, montant) => {
@@ -87,10 +86,10 @@ const getRandomResponse = (userToTimeout, buyer, montant) => {
 
 /**
  * Fonction pour gérer les erreurs de timeout
- * @param {integer} status le status de la requête
+ * @param {number} status le status de la requête
  * @param {Object} client le client
  * @param {Object} channel le channel
- * @param {integer} replyId l'id de la personne qui reçoit la réponse
+ * @param {number} replyId l'id de la personne qui reçoit la réponse
  */
 const handleTimeoutError = (status, client, channel, replyId) => {
   if (status === 400) {
