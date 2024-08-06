@@ -1,6 +1,9 @@
+// Import Package
 import axios from 'axios';
-import { serviceTimeout } from '../../services/timeout.js';
+
+// Import Services
 import { getOauthToken } from '../../services/auth.js';
+import { serviceTimeout } from '../../services/timeout.js';
 
 jest.mock('axios');
 jest.mock('../../services/auth.js');

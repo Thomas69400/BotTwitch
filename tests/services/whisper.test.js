@@ -1,6 +1,9 @@
+// Import Services
 import axios from 'axios';
-import { serviceWhisper } from '../../services/whisper';
+
+// Import Services
 import { getOauthToken } from '../../services/auth';
+import { serviceWhisper } from '../../services/whisper';
 
 jest.mock('axios');
 jest.mock('../../services/auth.js');

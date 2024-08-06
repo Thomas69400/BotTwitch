@@ -1,3 +1,4 @@
+// Import Package
 import { randomInt } from 'crypto';
 
 let userCooldowns = {}; // Objet pour stocker le temps de cooldown pour les utilisateurs

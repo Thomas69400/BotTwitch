@@ -1,5 +1,8 @@
-import { getOauthToken } from './auth.js';
+// Import Package
 import axios from 'axios';
+
+// Import Services
+import { getOauthToken } from './auth.js';
 
 /**
  * Envoie d'une requête à l'API twitch pour ajouter le rôle VIP à un utilisateur

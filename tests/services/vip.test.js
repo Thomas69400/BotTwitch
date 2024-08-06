@@ -1,4 +1,7 @@
+// Import Package
 import axios from 'axios';
+
+// Import Services
 import { getOauthToken } from '../../services/auth';
 import { serviceMakeVip, serviceRemoveVip } from '../../services/vip';
 

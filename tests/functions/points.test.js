@@ -1,4 +1,10 @@
+// Import Package
 import fs from 'fs';
+
+// Import Services
+import { getLive } from '../../services/auth.js';
+
+// Import Fonctions
 import {
   activeRevenue,
   addPoints,
@@ -12,7 +18,6 @@ import {
   savePoints,
 } from '../../functions/points.js';
 import { toBoolean } from '../../functions/utils.js';
-import { getLive } from '../../services/auth.js';
 
 jest.mock('fs');
 jest.mock('../../functions/utils.js');

@@ -1,5 +1,10 @@
+// Import Package
 import fs from 'fs';
+
+// Import Services
 import { getLive } from '../services/auth.js';
+
+// Import Fonctions
 import { toBoolean } from './utils.js';
 
 let viewers = {};

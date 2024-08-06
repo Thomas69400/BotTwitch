@@ -1,6 +1,9 @@
-import { getLive } from '../services/auth.js';
+// Import Fonctions
 import { addPoints } from './points.js';
-import { checkRole, shuffleArray, sleep, toBoolean, roundNumber } from './utils.js';
+import { checkRole, roundNumber, shuffleArray, sleep, toBoolean } from './utils.js';
+
+// Import Services
+import { getLive } from '../services/auth.js';
 
 let raffleStatus = false;
 let raffleParticipants = [];

@@ -1,20 +1,18 @@
+// Import DotEnv
 import dotenv from 'dotenv';
 
 dotenv.config();
 dotenv.config({ path: process.env.CONFIG_PATH });
 
+// Import Package
 import tmi from 'tmi.js';
 
+// Import Fonctions
 import { activeRevenue, checkViewers, readFile } from './functions/points.js';
 import { begForRaffle, cancelRaffle, joinRaffle, startRaffle } from './functions/raffle.js';
 import { timeout } from './functions/timeout.js';
 import { commandes } from './functions/utils.js';
-import {
-  checkCooldown,
-  checkForPourquoi,
-  checkForQui,
-  checkForQuoi,
-} from './functions/whoWhyWhat.js';
+import { checkForPourquoi, checkForQui, checkForQuoi } from './functions/whoWhyWhat.js';
 import { getOauthToken } from './services/auth.js';
 
 // Initialisation
@@ -28,6 +26,7 @@ const client = new tmi.Client({
 });
 client.connect().catch(console.error);
 readFile();
+
 // Regex
 const onlyLetter = /[^a-z\s]/g;
 const letterNumber = /[^a-z1-9\s]/;
@@ -39,7 +38,7 @@ client.on('message', async (channel, tags, message, self) => {
   // Le bot ne répond pas à lui-même
   if (self) return;
 
-  // Si le spectateur n'est pas déjà suivi par le systeme de point, l'ajoute
+  // Si le spectateur n'est pas déjà suivi par le systeme de point, on l'ajoute
   checkViewers(tags);
 
   // Supprime tout les caractères spéciaux

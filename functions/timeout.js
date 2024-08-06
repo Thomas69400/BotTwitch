@@ -1,6 +1,9 @@
-import { getViewer, getIdViewerByName, removePoints } from './points.js';
-import { serviceTimeout } from '../services/timeout.js';
+// Import Fonctions
+import { getIdViewerByName, getViewer, removePoints } from './points.js';
 import { clearMessage, commandes } from './utils.js';
+
+// Import Services
+import { serviceTimeout } from '../services/timeout.js';
 import { getUser } from '../services/utils.js';
 import { serviceWhisper } from '../services/whisper.js';
 

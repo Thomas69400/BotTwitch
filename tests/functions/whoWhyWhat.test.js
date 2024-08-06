@@ -1,12 +1,15 @@
+// Import Package
 import { randomInt } from 'crypto';
+
+// Import Fonctions
 import {
-  deleteEmptyWords,
   checkCooldown,
   checkForPourquoi,
-  checkForQuoi,
   checkForQui,
-  resetCooldowns,
+  checkForQuoi,
+  deleteEmptyWords,
   getCooldownTime,
+  resetCooldowns,
 } from '../../functions/whoWhyWhat.js';
 
 // Mock de la fonction randomInt pour contrôler les réponses aléatoires
