@@ -50,7 +50,7 @@ client.on('message', async (channel, tags, message, self) => {
   if (message.startsWith('!join')) joinRaffle(tags);
   if (message.startsWith('!help')) client.say(process.env.CHANNEL, commandes());
   if (message.startsWith('!classement')) classement(client);
-  if (message.startsWith('!points')) points(client, tags);
+  if (message.startsWith('!points')) points(client, tags, message.toLocaleLowerCase());
   if (message.startsWith('!timeout'))
     timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
 

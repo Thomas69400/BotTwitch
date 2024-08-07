@@ -5,7 +5,7 @@ import fs from 'fs';
 import { getLive } from '../services/auth.js';
 
 // Import Fonctions
-import { toBoolean } from './utils.js';
+import { toBoolean, clearMessage } from './utils.js';
 
 let viewers = {};
 
@@ -151,19 +151,36 @@ export const classement = (client) => {
  * Met un message dans le chat qui indique les points de l'utilisateur qui demande
  * @param {Object} client le client
  * @param {Object} tags Les données de l'utilisateur qui envoie le message
- * //TODO mettre en paramètre le message pour avoir les points d'un utilisateur qui n'est pas soit meme
+ * @param {string} message Le message que l'utilisateur envoie
  */
-export const points = (client, tags) => {
-  const askingViewer = getViewer(tags['user-id']);
-  if (askingViewer) {
-    client.reply(
-      process.env.CHANNEL,
-      `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`,
-      tags.id,
-    );
+export const points = (client, tags, message) => {
+  const sliceMessage = clearMessage((message || '').replace('!points', '').trim());
+  let reply = '';
+  let askingViewer = {};
+  if (typeof sliceMessage === 'string' && sliceMessage.length > 0) {
+    // Chercher les points de l'utilisateur spécifié
+    const viewerId = getIdViewerByName(sliceMessage);
+    if (viewerId) {
+      askingViewer = getViewer(viewerId);
+      if (askingViewer) {
+        reply = `${askingViewer.name} a ${askingViewer.points} ${process.env.POINT_NAME} !`;
+      } else {
+        reply = `Je n'ai pas trouvé de points pour l'utilisateur ${sliceMessage}.`;
+      }
+    } else {
+      reply = `Je n'ai pas trouvé de points pour l'utilisateur ${sliceMessage}.`;
+    }
   } else {
-    client.reply(process.env.CHANNEL, `Je n'ai pas trouvé tes points.`, tags.id);
+    // Chercher les points de l'utilisateur demandeur
+    askingViewer = getViewer(tags['user-id']);
+    if (askingViewer) {
+      reply = `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`;
+    } else {
+      reply = "Je n'ai pas trouvé tes points.";
+    }
   }
+
+  client.reply(process.env.CHANNEL, reply, tags.id);
 };
 
 /**
