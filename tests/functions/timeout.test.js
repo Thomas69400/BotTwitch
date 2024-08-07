@@ -53,8 +53,6 @@ test('should respond with not enough points if buyer has insufficient points', a
 });
 
 test('should respond with user does not exist if userToTimeout is not found', async () => {
-  console.log('test');
-
   clearMessage.mockReturnValueOnce(mockMessage);
   getViewer.mockReturnValueOnce({ points: 100 });
   getIdViewerByName.mockReturnValueOnce(null);
@@ -69,8 +67,6 @@ test('should respond with user does not exist if userToTimeout is not found', as
 });
 
 test('should timeout user successfully', async () => {
-  console.log('test2');
-
   clearMessage.mockReturnValueOnce(mockMessage);
   getViewer.mockReturnValueOnce({ points: 100 });
   getIdViewerByName.mockReturnValueOnce('userToTimeoutId');
