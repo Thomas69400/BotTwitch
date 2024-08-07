@@ -31,14 +31,6 @@ export const readFile = () => {
 };
 
 /**
- * Retourne la liste des viewers
- * @returns {Object} l'objet contenant les viewers et leurs points
- */
-export const getViewers = () => {
-  return viewers;
-};
-
-/**
  * Regarde si un viewer existe sinon lui attribue une Date lastActive
  * @param {Object} tags Les données d'un utilisateur
  */
@@ -139,6 +131,23 @@ export const savePoints = () => {
 };
 
 /**
+ * Classe les viewers par points et les affiches dans le chat
+ * @param {Object} client le client
+ */
+export const classement = (client) => {
+  const arrayViewers = Object.values(viewers); // Convertir l'objet en un tableau de valeurs
+  arrayViewers.sort((a, b) => b.points - a.points); // Trier le tableau en ordre décroissant de points
+  let getFirstTenViewers = '';
+  for (let index = 0; index < arrayViewers.length && index < 10; index++) {
+    const element = arrayViewers[index];
+    getFirstTenViewers += `#${index + 1} ${element.name} ${element.points} ${
+      index < arrayViewers.length - 1 ? ';' : ''
+    } `;
+  }
+  client.say(process.env.CHANNEL, getFirstTenViewers);
+};
+
+/**
  * Retourne un viewer avec ses points grâce à son id
  * @param {number} id
  * @returns viewer
@@ -169,4 +178,12 @@ export const getIdViewerByName = (name) => {
 export const reassignViewers = (newValues) => {
   if (newValues) viewers = { ...newValues };
   else viewers = {};
+};
+
+/**
+ * Retourne la liste des viewers
+ * @returns {Object} l'objet contenant les viewers et leurs points
+ */
+export const getViewers = () => {
+  return viewers;
 };
