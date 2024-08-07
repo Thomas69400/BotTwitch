@@ -141,10 +141,25 @@ export const classement = (client) => {
   for (let index = 0; index < arrayViewers.length && index < 10; index++) {
     const element = arrayViewers[index];
     getFirstTenViewers += `#${index + 1} ${element.name} ${element.points} ${
-      index < arrayViewers.length - 1 ? ';' : ''
-    } `;
+      process.env.POINT_NAME
+    } ${index < arrayViewers.length - 1 ? ';' : ''} `;
   }
   client.say(process.env.CHANNEL, getFirstTenViewers);
+};
+
+/**
+ * Met un message dans le chat qui indique les points de l'utilisateur qui demande
+ * @param {Object} client le client
+ * @param {Object} tags Les données de l'utilisateur qui envoie le message
+ * //TODO mettre en paramètre le message pour avoir les points d'un utilisateur qui n'est pas soit meme
+ */
+export const points = (client, tags) => {
+  const askingViewer = getViewer(tags['user-id']);
+  client.reply(
+    process.env.CHANNEL,
+    `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`,
+    tags.id,
+  );
 };
 
 /**

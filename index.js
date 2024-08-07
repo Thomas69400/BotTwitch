@@ -8,7 +8,7 @@ dotenv.config({ path: process.env.CONFIG_PATH });
 import tmi from 'tmi.js';
 
 // Import Fonctions
-import { activeRevenue, checkViewers, readFile, classement } from './functions/points.js';
+import { activeRevenue, checkViewers, readFile, classement, points } from './functions/points.js';
 import { begForRaffle, cancelRaffle, joinRaffle, startRaffle } from './functions/raffle.js';
 import { timeout } from './functions/timeout.js';
 import { commandes } from './functions/utils.js';
@@ -50,6 +50,7 @@ client.on('message', async (channel, tags, message, self) => {
   if (message.startsWith('!join')) joinRaffle(tags);
   if (message.startsWith('!help')) client.say(process.env.CHANNEL, commandes());
   if (message.startsWith('!classement')) classement(client);
+  if (message.startsWith('!points')) points(client, tags);
   if (message.startsWith('!timeout'))
     timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
 
