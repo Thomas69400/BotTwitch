@@ -144,7 +144,7 @@ export const classement = (client) => {
       process.env.POINT_NAME
     } ${index < arrayViewers.length - 1 ? ';' : ''} `;
   }
-  client.say(process.env.CHANNEL, getFirstTenViewers);
+  client.say(process.env.CHANNEL, getFirstTenViewers.trim());
 };
 
 /**
@@ -155,11 +155,15 @@ export const classement = (client) => {
  */
 export const points = (client, tags) => {
   const askingViewer = getViewer(tags['user-id']);
-  client.reply(
-    process.env.CHANNEL,
-    `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`,
-    tags.id,
-  );
+  if (askingViewer) {
+    client.reply(
+      process.env.CHANNEL,
+      `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`,
+      tags.id,
+    );
+  } else {
+    client.reply(process.env.CHANNEL, `Je n'ai pas trouvé tes points.`, tags.id);
+  }
 };
 
 /**
