@@ -16,6 +16,8 @@ import {
   reassignViewers,
   removePoints,
   savePoints,
+  classement,
+  tellPoints,
 } from '../../src/functions/points';
 import { toBoolean } from '../../src/functions/utils';
 
@@ -28,7 +30,7 @@ describe('Points Service', () => {
 
   beforeAll(() => {
     originalEnv = { ...process.env };
-    process.env.POINTS_JSON = 'points.json';
+    process.env.POINTS_JSON = 'points.test.json';
   });
 
   afterAll(() => {
@@ -325,6 +327,102 @@ describe('Points Service', () => {
       checkViewers(tags);
       const id = getIdViewerByName('John');
       expect(id).toEqual('1');
+    });
+  });
+
+  describe('classement', () => {
+    let client;
+
+    beforeEach(() => {
+      client = { say: jest.fn() };
+      reassignViewers({
+        1: { id: '1', name: 'John', points: 50, lastActive: new Date() },
+        2: { id: '2', name: 'Doe', points: 100, lastActive: new Date() },
+        3: { id: '3', name: 'Alice', points: 75, lastActive: new Date() },
+      });
+      process.env.POINT_NAME = 'points';
+      process.env.CHANNEL = '#testChannel';
+    });
+
+    test('should send top 3 viewers to chat', () => {
+      classement(client);
+      expect(client.say).toHaveBeenCalledWith(
+        process.env.CHANNEL,
+        '#1 Doe 100 points ; #2 Alice 75 points ; #3 John 50 points',
+      );
+    });
+
+    test('should handle less than 10 viewers', () => {
+      reassignViewers({
+        1: { id: '1', name: 'John', points: 50, lastActive: new Date() },
+      });
+      classement(client);
+      expect(client.say).toHaveBeenCalledWith(process.env.CHANNEL, '#1 John 50 points');
+    });
+
+    test('should handle no viewers', () => {
+      reassignViewers({});
+      classement(client);
+      expect(client.say).toHaveBeenCalledWith(process.env.CHANNEL, '');
+    });
+  });
+
+  describe('points', () => {
+    let client;
+    const tags = { 'user-id': '1', username: 'John', id: 'msg-1' };
+
+    beforeEach(() => {
+      try {
+        console.log('Running beforeEach');
+        client = { reply: jest.fn() };
+        reassignViewers({
+          1: { id: '1', name: 'John', points: 50, lastActive: new Date() },
+          2: { id: '2', name: 'Jane', points: 75, lastActive: new Date() },
+        });
+        process.env.POINT_NAME = 'points';
+        process.env.CHANNEL = '#testChannel';
+      } catch (error) {
+        console.error('Error in beforeEach:', error);
+      }
+    });
+
+    test('should send points of the user who asked', () => {
+      console.log('Running test: should send points of the user who asked');
+      const message = '!points';
+      tellPoints(client, tags, message);
+      expect(client.reply).toHaveBeenCalledWith(process.env.CHANNEL, 'Tu as 50 points !', 'msg-1');
+    });
+
+    test('should handle undefined viewer when asking for own points', () => {
+      console.log('Running test: should handle undefined viewer when asking for own points');
+      reassignViewers({});
+      const message = '!points';
+      tellPoints(client, tags, message);
+      expect(client.reply).toHaveBeenCalledWith(
+        process.env.CHANNEL,
+        "Je n'ai pas trouvé tes points.",
+        'msg-1',
+      );
+    });
+
+    test('should send points of the specified user', () => {
+      console.log(getViewers());
+      const message = '!points Jane';
+      tellPoints(client, tags, message);
+      expect(client.reply).toHaveBeenCalledWith(process.env.CHANNEL, 'Jane a 75 points !', 'msg-1');
+    });
+
+    test("should handle undefined viewer when asking for another user's points", () => {
+      console.log(
+        "Running test: should handle undefined viewer when asking for another user's points",
+      );
+      const message = '!points NonExistentUser';
+      tellPoints(client, tags, message);
+      expect(client.reply).toHaveBeenCalledWith(
+        process.env.CHANNEL,
+        "Je n'ai pas trouvé de points pour l'utilisateur NonExistentUser.",
+        'msg-1',
+      );
     });
   });
 });

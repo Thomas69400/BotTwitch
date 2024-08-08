@@ -8,7 +8,7 @@ dotenv.config({ path: process.env.CONFIG_PATH });
 import tmi from 'tmi.js';
 
 // Import Fonctions
-import { activeRevenue, checkViewers, readFile } from './functions/points';
+import { activeRevenue, checkViewers, readFile, classement, tellPoints } from './functions/points';
 import { begForRaffle, cancelRaffle, joinRaffle, startRaffle } from './functions/raffle';
 import { timeout } from './functions/timeout';
 import { commandes } from './functions/utils';
@@ -60,6 +60,8 @@ async function initializeBot() {
     if (message.startsWith('!raffle')) startRaffle(client, tags, message.replace(amountRegex, ''));
     if (message.startsWith('!cancel')) cancelRaffle(client, tags);
     if (message.startsWith('!join')) joinRaffle(tags);
+    if (message.startsWith('!classement')) classement(client);
+    if (message.startsWith('!points')) tellPoints(client, tags, message.toLocaleLowerCase());
     if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes());
     if (message.startsWith('!timeout'))
       timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));

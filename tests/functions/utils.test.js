@@ -107,6 +107,6 @@ describe('Fonctions Utils', () => {
       `!timeout pseudo durée(minutes) ex: !timeout ${process.env.CHANNEL} 1 --> prix : ${process.env.TIMEOUT_BASE_COST}`,
     );
     expect(commandes('vip')).toBe(`!vip pseudo ex: !vip ${process.env.CHANNEL}`);
-    expect(commandes()).toBe('Commandes disponible: !timeout ; !vip ; !unvip');
+    expect(commandes()).toBe('Commandes disponible: !timeout ; !points ; !classement');
   });
 });

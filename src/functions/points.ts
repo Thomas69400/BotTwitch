@@ -5,7 +5,7 @@ import fs from 'fs';
 import { getLive } from '../services/auth';
 
 // Import Fonctions
-import { toBoolean } from './utils';
+import { toBoolean, clearMessage } from './utils';
 
 // Import Types
 import { Tags, Viewer, Viewers } from '../types/types';
@@ -46,14 +46,6 @@ export const readFile = (): void => {
       }
     }
   });
-};
-
-/**
- * Retourne la liste des viewers
- * @returns {Viewers} l'objet contenant les viewers et leurs points
- */
-export const getViewers = (): Viewers => {
-  return viewers;
 };
 
 /**
@@ -164,6 +156,62 @@ export const savePoints = (): void => {
 };
 
 /**
+ * Classe les viewers par points et les affiches dans le chat
+ * @param {any} client le client
+ * @returns {void}
+ */
+export const classement = (client: any): void => {
+  const arrayViewers = Object.values(viewers); // Convertir l'objet en un tableau de valeurs
+  arrayViewers.sort((a, b) => b.points - a.points); // Trier le tableau en ordre décroissant de points
+  let getFirstTenViewers = '';
+  for (let index = 0; index < arrayViewers.length && index < 10; index++) {
+    const element = arrayViewers[index];
+    getFirstTenViewers += `#${index + 1} ${element.name} ${element.points} ${
+      process.env.POINT_NAME
+    } ${index < arrayViewers.length - 1 ? ';' : ''} `;
+  }
+  client.say(process.env.CHANNEL, getFirstTenViewers.trim());
+};
+
+/**
+ * Met un message dans le chat qui indique les points de l'utilisateur qui demande
+ * @param {any} client le client
+ * @param {Tags} tags Les données de l'utilisateur qui envoie le message
+ * @param {string} message Le message que l'utilisateur envoie
+ * @returns {void} envoie un message dans le chat mais la fonction en elle meme ne renvoie rien
+ */
+export const tellPoints = (client: any, tags: Tags, message: string): void => {
+  const username = clearMessage((message || '').replace('!points', '').trim());
+  let reply = '';
+  console.log(username);
+
+  if (typeof username === 'string' && username.length > 0) {
+    // Chercher les points de l'utilisateur spécifié
+    const viewerId = getIdViewerByName(username);
+    if (viewerId) {
+      const askingViewer: Viewer = getViewer(viewerId);
+      if (askingViewer) {
+        reply = `${askingViewer.name} a ${askingViewer.points} ${process.env.POINT_NAME} !`;
+      } else {
+        reply = `Je n'ai pas trouvé de points pour l'utilisateur ${username}.`;
+      }
+    } else {
+      reply = `Je n'ai pas trouvé de points pour l'utilisateur ${username}.`;
+    }
+  } else {
+    // Chercher les points de l'utilisateur demandeur
+    const askingViewer: Viewer = getViewer(tags['user-id']);
+    if (askingViewer) {
+      reply = `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`;
+    } else {
+      reply = "Je n'ai pas trouvé tes points.";
+    }
+  }
+
+  client.reply(process.env.CHANNEL, reply, tags.id);
+};
+
+/**
  * Retourne un viewer avec ses points grâce à son id
  * @param {string} id
  * @returns {Viewer}
@@ -194,4 +242,12 @@ export const getIdViewerByName = (name: string): string | undefined => {
 export const reassignViewers = (newValues?: Viewers): void => {
   if (newValues) viewers = { ...newValues };
   else viewers = {};
+};
+
+/**
+ * Retourne la liste des viewers
+ * @returns {Viewers} l'objet contenant les viewers et leurs points
+ */
+export const getViewers = (): Viewers => {
+  return viewers;
 };

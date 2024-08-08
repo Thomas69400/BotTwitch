@@ -32,6 +32,8 @@ CODE_BOT = x
 
 #RAFFLE WIN RATIO
 RAFFLE_WIN_RATIO = 33
+
+POINT_NAME = x
 ```
 
 .env.development

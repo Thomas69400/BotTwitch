@@ -73,6 +73,6 @@ export const commandes = (message?: string): string => {
     case 'vip':
       return `!vip pseudo ex: !vip ${process.env.CHANNEL}`;
     default:
-      return 'Commandes disponible: !timeout ; !vip ; !unvip';
+      return 'Commandes disponible: !timeout ; !points ; !classement'; //!vip ; !unvip
   }
 };
