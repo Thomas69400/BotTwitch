@@ -2,7 +2,7 @@
 import fs from 'fs';
 
 // Import Services
-import { getLive } from '../../services/auth.js';
+import { getLive } from '../../src/services/auth';
 
 // Import Fonctions
 import {
@@ -16,12 +16,12 @@ import {
   reassignViewers,
   removePoints,
   savePoints,
-} from '../../functions/points.js';
-import { toBoolean } from '../../functions/utils.js';
+} from '../../src/functions/points';
+import { toBoolean } from '../../src/functions/utils';
 
 jest.mock('fs');
-jest.mock('../../functions/utils.js');
-jest.mock('../../services/auth');
+jest.mock('../../src/functions/utils');
+jest.mock('../../src/services/auth');
 
 describe('Points Service', () => {
   let originalEnv;

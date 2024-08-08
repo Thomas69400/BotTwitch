@@ -2,11 +2,11 @@
 import axios from 'axios';
 
 // Import Services
-import { getOauthToken } from '../../services/auth';
-import { serviceMakeVip, serviceRemoveVip } from '../../services/vip';
+import { getOauthToken } from '../../src/services/auth';
+import { serviceMakeVip, serviceRemoveVip } from '../../src/services/vip';
 
 jest.mock('axios');
-jest.mock('../../services/auth.js');
+jest.mock('../../src/services/auth');
 
 describe('VIP Services', () => {
   let originalLog;

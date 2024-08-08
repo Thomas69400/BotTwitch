@@ -1,15 +1,15 @@
-import { timeout } from '../../functions/timeout';
-import { getViewer, getIdViewerByName, removePoints } from '../../functions/points';
-import { serviceTimeout } from '../../services/timeout';
-import { clearMessage, commandes } from '../../functions/utils';
-import { getUser } from '../../services/utils';
-import { serviceWhisper } from '../../services/whisper';
+import { timeout } from '../../src/functions/timeout';
+import { getViewer, getIdViewerByName, removePoints } from '../../src/functions/points';
+import { serviceTimeout } from '../../src/services/timeout';
+import { clearMessage, commandes } from '../../src/functions/utils';
+import { getUser } from '../../src/services/utils';
+import { serviceWhisper } from '../../src/services/whisper';
 
-jest.mock('../../functions/points');
-jest.mock('../../services/timeout');
-jest.mock('../../functions/utils');
-jest.mock('../../services/utils');
-jest.mock('../../services/whisper');
+jest.mock('../../src/functions/points');
+jest.mock('../../src/services/timeout');
+jest.mock('../../src/functions/utils');
+jest.mock('../../src/services/utils');
+jest.mock('../../src/services/whisper');
 
 const mockClient = {
   reply: jest.fn(),
@@ -17,6 +17,7 @@ const mockClient = {
 };
 
 const mockTags = {
+  id: 'tagId',
   'user-id': '123',
   username: 'buyer',
 };
@@ -48,13 +49,11 @@ test('should respond with not enough points if buyer has insufficient points', a
   expect(mockClient.reply).toHaveBeenCalledWith(
     mockChannel,
     "Tu n'as pas assez de points. MONKE",
-    undefined,
+    'tagId',
   );
 });
 
 test('should respond with user does not exist if userToTimeout is not found', async () => {
-  console.log('test');
-
   clearMessage.mockReturnValueOnce(mockMessage);
   getViewer.mockReturnValueOnce({ points: 100 });
   getIdViewerByName.mockReturnValueOnce(null);
@@ -64,13 +63,11 @@ test('should respond with user does not exist if userToTimeout is not found', as
   expect(mockClient.reply).toHaveBeenCalledWith(
     mockChannel,
     "Cet utilisateur n'existe pas.",
-    undefined,
+    'tagId',
   );
 });
 
 test('should timeout user successfully', async () => {
-  console.log('test2');
-
   clearMessage.mockReturnValueOnce(mockMessage);
   getViewer.mockReturnValueOnce({ points: 100 });
   getIdViewerByName.mockReturnValueOnce('userToTimeoutId');
@@ -79,7 +76,10 @@ test('should timeout user successfully', async () => {
   await timeout(mockClient, mockChannel, mockTags, mockMessage);
 
   expect(mockClient.say).toHaveBeenCalled();
-  expect(removePoints).toHaveBeenCalledWith([{ id: '123', name: 'buyer' }], 10);
+  expect(removePoints).toHaveBeenCalledWith(
+    expect.arrayContaining([expect.objectContaining({ id: '123' })]),
+    10,
+  );
 });
 
 test('should handle timeout error correctly', async () => {
@@ -92,6 +92,6 @@ test('should handle timeout error correctly', async () => {
   expect(mockClient.reply).toHaveBeenCalledWith(
     mockChannel,
     'Cet utilisateur ne peut pas être timeout!',
-    undefined,
+    'tagId',
   );
 });

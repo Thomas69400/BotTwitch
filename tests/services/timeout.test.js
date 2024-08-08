@@ -2,11 +2,11 @@
 import axios from 'axios';
 
 // Import Services
-import { getOauthToken } from '../../services/auth.js';
-import { serviceTimeout } from '../../services/timeout.js';
+import { getOauthToken } from '../../src/services/auth';
+import { serviceTimeout } from '../../src/services/timeout';
 
 jest.mock('axios');
-jest.mock('../../services/auth.js');
+jest.mock('../../src/services/auth');
 
 describe('serviceTimeout', () => {
   beforeEach(() => {

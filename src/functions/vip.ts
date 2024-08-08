@@ -1,5 +1,5 @@
 // Import Services
-import { serviceMakeVip, serviceRemoveVip } from '../services/vip.js';
+import { serviceMakeVip, serviceRemoveVip } from '../services/vip';
 
 export const makeVip = async () => {};
 
