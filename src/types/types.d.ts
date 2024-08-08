@@ -1,24 +1,25 @@
+// TODO à revoir avec les Tags de @Thomas69400
 export interface Tags {
   id: string;
   'user-id': string;
   username: string;
-  'badge-info'?: [] | null; // TODO à revoir j'avais que null
+  'badge-info'?: [] | null;
   badges?: { [id: string]: number };
   'client-nonce'?: string;
   color?: string;
   'display-name'?: string;
-  emotesv?: string[] | null; // TODO à revoir j'avais que null
+  emotesv?: string[] | null;
   'first-msg'?: boolean;
-  flags?: [] | null; // TODO à revoir j'avais que null
+  flags?: [] | null;
   mod?: boolean;
   'returning-chatter'?: boolean;
   'room-id'?: string;
   subscriber?: boolean;
   'tmi-sent-ts'?: string;
   turbo?: boolean;
-  'user-type'?: [] | null; // TODO à revoir j'avais que null
-  'emotes-raw'?: [] | null; // TODO à revoir j'avais que null
-  'badge-info-raw'?: [] | null; // TODO à revoir j'avais que null
+  'user-type'?: [] | null;
+  'emotes-raw'?: [] | null;
+  'badge-info-raw'?: [] | null;
   'badges-raw'?: string;
   'message-type'?: string;
 }

@@ -71,10 +71,10 @@ describe('Points Service', () => {
             id: '1',
             name: 'John',
             points: 10,
-            lastActive: expect.any(String),
+            lastActive: expect.any(Date),
           },
         });
-        expect(new Date(viewers['1'].lastActive).toISOString()).toEqual(viewers['1'].lastActive);
+        expect(new Date(viewers['1'].lastActive)).toEqual(viewers['1'].lastActive);
         done();
       });
     });

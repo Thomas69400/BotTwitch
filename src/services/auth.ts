@@ -31,8 +31,8 @@ export const getOauthToken = async (forBot: boolean): Promise<string | undefined
 
 /**
  * Envoie d'une requête à l'API twitch pour récupérer chaînes en live et voir si notre stream l'est
- * @return {Object} la requête passée
- */ // TODO voir l'objet et en faire un type précis
+ * @return {Live[]} la requête passée
+ */
 export const getLive = async (): Promise<Live[] | undefined> => {
   console.log('in service getLive');
 

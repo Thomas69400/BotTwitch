@@ -89,7 +89,6 @@ export const activeRevenue = async (): Promise<void> => {
     if (!(viewer.lastActive instanceof Date)) {
       throw new Error('Invalid lastActive property. It should be an instance of Date.');
     }
-    // TODO Faire un fonction quand on recupere les data de points pour convertire le string de lastActive en
     const timeDiff = (now.getTime() - viewer.lastActive.getTime()) / 1000 / 60; // Temps en minutes
 
     // Si le spectateur a été actif dans les 5 dernières minutes

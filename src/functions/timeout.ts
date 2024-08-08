@@ -69,7 +69,6 @@ export const timeout = async (
       userToTimeout = parseInt(user[0].id);
     }
   }
-  // TODO s'assurer que cette merde marche
   const responseTimeout = await serviceTimeout(userToTimeout, time * 60, tags.username);
 
   if (responseTimeout !== 200) {
@@ -94,7 +93,7 @@ const getRandomResponse = (
   buyer: string,
   prize?: string | number,
 ): string => {
-  const amount = prize !== undefined ? String(prize) : ''; // TODO s'assurer que cette merde marche
+  const amount = prize !== undefined ? String(prize) : '';
   let response = timeoutResponses[Math.floor(Math.random() * timeoutResponses.length)];
   response = response
     .replace('<name1>', userToTimeout)
