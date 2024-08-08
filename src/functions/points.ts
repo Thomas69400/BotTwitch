@@ -25,7 +25,22 @@ export const readFile = (): void => {
       }
     } else {
       try {
-        viewers = JSON.parse(data);
+        const parsedData: Viewers = JSON.parse(data);
+
+        // ça reconvertit les lastActive strings du JSON en type Date (ça existe pas en json en gros)
+        // TODO voir si c'est utile de changer ça quand on passe dans une base de données
+        viewers = Object.fromEntries(
+          Object.entries(parsedData).map(([id, viewer]) => [
+            id,
+            {
+              ...viewer,
+              lastActive:
+                typeof viewer.lastActive === 'string'
+                  ? new Date(viewer.lastActive)
+                  : viewer.lastActive,
+            },
+          ]),
+        );
       } catch (jsonErr) {
         console.error("Erreur lors de l'analyse du fichier JSON:", jsonErr);
       }
