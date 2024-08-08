@@ -2,17 +2,20 @@
 import fs from 'fs';
 
 // Import Services
-import { getLive } from '../services/auth.js';
+import { getLive } from '../services/auth';
 
 // Import Fonctions
-import { toBoolean, clearMessage } from './utils.js';
+import { toBoolean, clearMessage } from './utils';
 
-let viewers = {};
+// Import Types
+import { Tags, Viewer, Viewers } from '../types/types';
+
+let viewers: Viewers = {};
 
 /**
  * Charger les points lors du démarrage
  */
-export const readFile = () => {
+export const readFile = (): void => {
   fs.readFile(`${process.env.POINTS_JSON}`, 'utf8', (err, data) => {
     if (err) {
       if (err.code === 'ENOENT') {
@@ -22,7 +25,22 @@ export const readFile = () => {
       }
     } else {
       try {
-        viewers = JSON.parse(data);
+        const parsedData: Viewers = JSON.parse(data);
+
+        // ça reconvertit les lastActive strings du JSON en type Date (ça existe pas en json en gros)
+        // TODO voir si c'est utile de changer ça quand on passe dans une base de données
+        viewers = Object.fromEntries(
+          Object.entries(parsedData).map(([id, viewer]) => [
+            id,
+            {
+              ...viewer,
+              lastActive:
+                typeof viewer.lastActive === 'string'
+                  ? new Date(viewer.lastActive)
+                  : viewer.lastActive,
+            },
+          ]),
+        );
       } catch (jsonErr) {
         console.error("Erreur lors de l'analyse du fichier JSON:", jsonErr);
       }
@@ -32,9 +50,10 @@ export const readFile = () => {
 
 /**
  * Regarde si un viewer existe sinon lui attribue une Date lastActive
- * @param {Object} tags Les données d'un utilisateur
+ * @param {Tags} tags Les données d'un utilisateur
+ * @returns {void}
  */
-export const checkViewers = (tags) => {
+export const checkViewers = (tags: Tags): void => {
   if (!viewers[tags['user-id']]) {
     viewers[tags['user-id']] = {
       id: tags['user-id'],
@@ -51,19 +70,22 @@ export const checkViewers = (tags) => {
 
 /**
  * Ajoute des points aux viewers qui ont parlé dans les 5 dernières minutes
- * @returns
+ * @returns {Promise<void>}
  */
-export const activeRevenue = async () => {
-  if (toBoolean(process.env.LIVE_REQUIERED)) if (await getLive()) return;
+export const activeRevenue = async (): Promise<void> => {
+  if (toBoolean(process.env.LIVE_REQUIERED as string)) if (await getLive()) return;
   const now = new Date();
-  const activeViewers = [];
+  const activeViewers: Viewer[] = [];
 
-  Object.values(viewers).forEach((data) => {
-    const timeDiff = (now - new Date(data.lastActive)) / 1000 / 60; // Temps en minutes
+  Object.values(viewers).forEach((viewer) => {
+    if (!(viewer.lastActive instanceof Date)) {
+      throw new Error('Invalid lastActive property. It should be an instance of Date.');
+    }
+    const timeDiff = (now.getTime() - viewer.lastActive.getTime()) / 1000 / 60; // Temps en minutes
 
     // Si le spectateur a été actif dans les 5 dernières minutes
     if (timeDiff < 5) {
-      activeViewers.push(data);
+      activeViewers.push(viewer);
     }
   });
   addPoints(activeViewers, 10);
@@ -71,11 +93,12 @@ export const activeRevenue = async () => {
 
 /**
  * Ajoute des points aux utilisateurs
- * @param {Object[]} winners Tableau d'objet des personnes qui gagnent des points. Doit contenir au moins id
- * @param {string} points les points gagnés
+ * @param { { id: string }[]} winners Tableau d'objet des personnes qui gagnent des points. Doit contenir au moins id
+ * @param {string | number} prize les points gagnés
+ * @returns {void}
  */
-export const addPoints = (winners, points) => {
-  points = Number(points); // Convertir en nombre
+export const addPoints = (winners: { id: string }[], prize: string | number): void => {
+  const points = Number(prize); // Convertir en Nombre
   winners.forEach((winner) => {
     if (!viewers[winner.id]) {
       viewers[winner.id] = {
@@ -97,16 +120,17 @@ export const addPoints = (winners, points) => {
 
 /**
  * Retire des points aux utilisateurs
- * @param {Object[]} loser Tableau d'objet des personnes qui perdent des points. Doit contenir au moins id
- * @param {string} points le nombre de points perdus
+ * @param {{ id: string }[]} losers Tableau d'objet des personnes qui perdent des points. Doit contenir au moins id
+ * @param {string | number} prize le nombre de points perdus
+ * @returns {void}
  */
-export const removePoints = (losers, points) => {
-  points = Number(points); // Convertir en nombre
+export const removePoints = (losers: { id: string }[], prize: string | number): void => {
+  const points = Number(prize); // Convertir en Nombre
   losers.forEach((loser) => {
     if (!viewers[loser.id]) {
       viewers[loser.id] = {
         id: loser.id,
-        name: 'Unknown',
+        name: 'Unknown', // TODO y'a un probleme la non ?????
         points: -points,
         lastActive: new Date(),
       };
@@ -123,18 +147,20 @@ export const removePoints = (losers, points) => {
 
 /**
  * Sauvegarder les points dans un fichier
+ * @returns {void}
  */
-export const savePoints = () => {
-  fs.writeFile(process.env.POINTS_JSON, JSON.stringify(viewers, null, 2), (err) => {
+export const savePoints = (): void => {
+  fs.writeFile(process.env.POINTS_JSON as string, JSON.stringify(viewers, null, 2), (err) => {
     if (err) console.error('Erreur lors de la sauvegarde des points:', err);
   });
 };
 
 /**
  * Classe les viewers par points et les affiches dans le chat
- * @param {Object} client le client
+ * @param {any} client le client
+ * @returns {void}
  */
-export const classement = (client) => {
+export const classement = (client: any): void => {
   const arrayViewers = Object.values(viewers); // Convertir l'objet en un tableau de valeurs
   arrayViewers.sort((a, b) => b.points - a.points); // Trier le tableau en ordre décroissant de points
   let getFirstTenViewers = '';
@@ -149,30 +175,32 @@ export const classement = (client) => {
 
 /**
  * Met un message dans le chat qui indique les points de l'utilisateur qui demande
- * @param {Object} client le client
- * @param {Object} tags Les données de l'utilisateur qui envoie le message
+ * @param {any} client le client
+ * @param {Tags} tags Les données de l'utilisateur qui envoie le message
  * @param {string} message Le message que l'utilisateur envoie
+ * @returns {void} envoie un message dans le chat mais la fonction en elle meme ne renvoie rien
  */
-export const points = (client, tags, message) => {
-  const sliceMessage = clearMessage((message || '').replace('!points', '').trim());
+export const tellPoints = (client: any, tags: Tags, message: string): void => {
+  const username = clearMessage((message || '').replace('!points', '').trim());
   let reply = '';
-  let askingViewer = {};
-  if (typeof sliceMessage === 'string' && sliceMessage.length > 0) {
+  console.log(username);
+
+  if (typeof username === 'string' && username.length > 0) {
     // Chercher les points de l'utilisateur spécifié
-    const viewerId = getIdViewerByName(sliceMessage);
+    const viewerId = getIdViewerByName(username);
     if (viewerId) {
-      askingViewer = getViewer(viewerId);
+      const askingViewer: Viewer = getViewer(viewerId);
       if (askingViewer) {
         reply = `${askingViewer.name} a ${askingViewer.points} ${process.env.POINT_NAME} !`;
       } else {
-        reply = `Je n'ai pas trouvé de points pour l'utilisateur ${sliceMessage}.`;
+        reply = `Je n'ai pas trouvé de points pour l'utilisateur ${username}.`;
       }
     } else {
-      reply = `Je n'ai pas trouvé de points pour l'utilisateur ${sliceMessage}.`;
+      reply = `Je n'ai pas trouvé de points pour l'utilisateur ${username}.`;
     }
   } else {
     // Chercher les points de l'utilisateur demandeur
-    askingViewer = getViewer(tags['user-id']);
+    const askingViewer: Viewer = getViewer(tags['user-id']);
     if (askingViewer) {
       reply = `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`;
     } else {
@@ -185,19 +213,19 @@ export const points = (client, tags, message) => {
 
 /**
  * Retourne un viewer avec ses points grâce à son id
- * @param {number} id
- * @returns viewer
+ * @param {string} id
+ * @returns {Viewer}
  */
-export const getViewer = (id) => {
+export const getViewer = (id: string): Viewer => {
   return viewers[id];
 };
 
 /**
  * Retourne un viewer avec ses points grâce à son nom
  * @param {string} name
- * @returns viewer
+ * @returns {string | undefined} id
  */
-export const getIdViewerByName = (name) => {
+export const getIdViewerByName = (name: string): string | undefined => {
   for (const id in viewers) {
     if (viewers[id].name === name) {
       return id;
@@ -208,18 +236,18 @@ export const getIdViewerByName = (name) => {
 /**
  * Réassign les valeurs des viewers
  * UNIQUEMENT UTILISER POUR LES TESTS
- * @param {Object} newValues Les viewers à réassigner
+ * @param {Viewers} newValues Les viewers à réassigner
  * @returns {void}
  */
-export const reassignViewers = (newValues) => {
+export const reassignViewers = (newValues?: Viewers): void => {
   if (newValues) viewers = { ...newValues };
   else viewers = {};
 };
 
 /**
  * Retourne la liste des viewers
- * @returns {Object} l'objet contenant les viewers et leurs points
+ * @returns {Viewers} l'objet contenant les viewers et leurs points
  */
-export const getViewers = () => {
+export const getViewers = (): Viewers => {
   return viewers;
 };

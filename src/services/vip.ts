@@ -2,14 +2,14 @@
 import axios from 'axios';
 
 // Import Services
-import { getOauthToken } from './auth.js';
+import { getOauthToken } from './auth';
 
 /**
  * Envoie d'une requête à l'API twitch pour ajouter le rôle VIP à un utilisateur
  * @param {string} userId l'id de l'utilisateur a VIP
  * @return {void} log la réponse dans la console
  */
-export const serviceMakeVip = async (userId) => {
+export const serviceMakeVip = async (userId: string): Promise<void> => {
   const oauthToken = await getOauthToken(false);
   const url = `https://api.twitch.tv/helix/channels/vips?broadcaster_id=${process.env.BROADCASTER_ID}&user_id=${userId}`;
   const headers = {
@@ -19,7 +19,7 @@ export const serviceMakeVip = async (userId) => {
   try {
     const response = await axios.post(url, {}, { headers });
     console.log('Response:', response.data);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in vip function:', error.response ? error.response.data : error.message);
   }
 };
@@ -29,7 +29,7 @@ export const serviceMakeVip = async (userId) => {
  * @param {string} userId l'id de l'utilisateur a VIP
  * @return {void} log la réponse dans la console
  */
-export const serviceRemoveVip = async (userId) => {
+export const serviceRemoveVip = async (userId: string): Promise<void> => {
   const oauthToken = await getOauthToken(false);
   const url = `https://api.twitch.tv/helix/channels/vips?broadcaster_id=${process.env.BROADCASTER_ID}&user_id=${userId}`;
   const headers = {
@@ -39,7 +39,7 @@ export const serviceRemoveVip = async (userId) => {
   try {
     const response = await axios.post(url, {}, { headers });
     console.log('Response:', response.data);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in vip function:', error.response ? error.response.data : error.message);
   }
 };

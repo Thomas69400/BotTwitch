@@ -2,14 +2,15 @@
 import axios from 'axios';
 
 // Import Services
-import { getOauthToken } from './auth.js';
+import { getOauthToken } from './auth';
+import { User } from '../types/service.types';
 
 /**
  * Envoie d'une requête à l'API twitch pour récupérer un User
  * @param {string} name le nom de la personne à récuperer
- * @return {Object} access_token contenant le token
+ * @return {Promise<User[] | undefined>} access_token contenant le token
  */
-export const getUser = async (name) => {
+export const getUser = async (name: string): Promise<User[] | undefined> => {
   console.log('in getUser service');
 
   const oauthToken = await getOauthToken(true);

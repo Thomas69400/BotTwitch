@@ -6,7 +6,7 @@ import {
   toBoolean,
   clearMessage,
   commandes,
-} from '../../functions/utils.js';
+} from '../../src/functions/utils';
 
 describe('Fonctions Utils', () => {
   // Test de la fonction sleep

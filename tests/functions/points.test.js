@@ -2,7 +2,7 @@
 import fs from 'fs';
 
 // Import Services
-import { getLive } from '../../services/auth.js';
+import { getLive } from '../../src/services/auth';
 
 // Import Fonctions
 import {
@@ -17,20 +17,20 @@ import {
   removePoints,
   savePoints,
   classement,
-  points,
-} from '../../functions/points.js';
-import { toBoolean } from '../../functions/utils.js';
+  tellPoints,
+} from '../../src/functions/points';
+import { toBoolean } from '../../src/functions/utils';
 
 jest.mock('fs');
-jest.mock('../../functions/utils.js');
-jest.mock('../../services/auth');
+jest.mock('../../src/functions/utils');
+jest.mock('../../src/services/auth');
 
 describe('Points Service', () => {
   let originalEnv;
 
   beforeAll(() => {
     originalEnv = { ...process.env };
-    process.env.POINTS_JSON = 'points.json';
+    process.env.POINTS_JSON = 'points.test.json';
   });
 
   afterAll(() => {
@@ -73,10 +73,10 @@ describe('Points Service', () => {
             id: '1',
             name: 'John',
             points: 10,
-            lastActive: expect.any(String),
+            lastActive: expect.any(Date),
           },
         });
-        expect(new Date(viewers['1'].lastActive).toISOString()).toEqual(viewers['1'].lastActive);
+        expect(new Date(viewers['1'].lastActive)).toEqual(viewers['1'].lastActive);
         done();
       });
     });
@@ -389,7 +389,7 @@ describe('Points Service', () => {
     test('should send points of the user who asked', () => {
       console.log('Running test: should send points of the user who asked');
       const message = '!points';
-      points(client, tags, message);
+      tellPoints(client, tags, message);
       expect(client.reply).toHaveBeenCalledWith(process.env.CHANNEL, 'Tu as 50 points !', 'msg-1');
     });
 
@@ -397,7 +397,7 @@ describe('Points Service', () => {
       console.log('Running test: should handle undefined viewer when asking for own points');
       reassignViewers({});
       const message = '!points';
-      points(client, tags, message);
+      tellPoints(client, tags, message);
       expect(client.reply).toHaveBeenCalledWith(
         process.env.CHANNEL,
         "Je n'ai pas trouvé tes points.",
@@ -406,9 +406,9 @@ describe('Points Service', () => {
     });
 
     test('should send points of the specified user', () => {
-      console.log('Running test: should send points of the specified user');
+      console.log(getViewers());
       const message = '!points Jane';
-      points(client, tags, message);
+      tellPoints(client, tags, message);
       expect(client.reply).toHaveBeenCalledWith(process.env.CHANNEL, 'Jane a 75 points !', 'msg-1');
     });
 
@@ -417,7 +417,7 @@ describe('Points Service', () => {
         "Running test: should handle undefined viewer when asking for another user's points",
       );
       const message = '!points NonExistentUser';
-      points(client, tags, message);
+      tellPoints(client, tags, message);
       expect(client.reply).toHaveBeenCalledWith(
         process.env.CHANNEL,
         "Je n'ai pas trouvé de points pour l'utilisateur NonExistentUser.",

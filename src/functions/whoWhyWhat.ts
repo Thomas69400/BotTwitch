@@ -1,16 +1,19 @@
 // Import Package
 import { randomInt } from 'crypto';
 
-let userCooldowns = {}; // Objet pour stocker le temps de cooldown pour les utilisateurs
+// Import Type
+import { CooldownUser, Tags } from '../types/types';
+
+let userCooldowns: CooldownUser = {}; // Objet pour stocker le temps de cooldown pour les utilisateurs
 const COOLDOWN_TIME = 600000; // 5 minutes en millisecondes
 
 /**
  * Retourne un tableau des mots en enlevant les espaces et en inversant le tableau
- * @param {array} words
- * @returns {array} le tableau inversé passé en paramètre
+ * @param {string[]} words
+ * @returns {string[]} le tableau inversé passé en paramètre
  */
-export const deleteEmptyWords = (words) => {
-  words = words.filter((word) => {
+export const deleteEmptyWords = (words: string[]): string[] => {
+  words = words.filter((word: string) => {
     if (word.length > 0) return word;
   });
   return words.reverse();
@@ -18,18 +21,19 @@ export const deleteEmptyWords = (words) => {
 
 /**
  * Cooldown pour pas que le bot spam les quette et feur à la même personne
- * @param {integer} userId l'ID de l'utilisateur
+ * @param {string} userId l'ID de l'utilisateur
  * @returns {boolean} false si pas actif / cooldown écoulé True si actif
  */
-export const checkCooldown = (userId) => {
-  const now = Date.now();
+export const checkCooldown = (userId: string): boolean => {
+  const now = new Date();
   // SI IL N'EXISTE PAS MAIS QU'IL A DIT QUI QUOI OU POURQUOI ALORS IL EXISTE ET A UN TIMER
   if (!userCooldowns[userId]) {
     userCooldowns[userId] = now;
     return false; // Pas de cooldown actif
   }
+
   // SI IL EXISTE ET QU'IL A UN COOLDOWN (IL A DIT QUI QUOI OU POURQUOI) ALORS SON COOLDOWN EST DESCENDU IL LUI RESTE ALORS COOLDOWN_TIME - HEURE DU MESSAGE
-  if (now - userCooldowns[userId] > COOLDOWN_TIME) {
+  if (now.getTime() - userCooldowns[userId].getTime() > COOLDOWN_TIME) {
     userCooldowns[userId] = now;
     return false;
   }
@@ -39,11 +43,11 @@ export const checkCooldown = (userId) => {
 /**
  * Regarde si un utilisateur a fini sa phrase par pourquoi et n'a pas de cooldown puis répond en conséquence
  * @param {Object} client le client
- * @param {Object} channel le channel
+ * @param {string} channel le channel
  * @param {string} message le message que l'utilisateur envoie
- * @param {Object} tags les données de l'utilisateur qui a envoyé le message
+ * @param {Tags} tags les données de l'utilisateur qui a envoyé le message
  */
-export const checkForPourquoi = (client, channel, message, tags) => {
+export const checkForPourquoi = (client: any, channel: string, message: string, tags: Tags) => {
   const pourquoiRegex = /\bpourqu?o+i+\b/g;
   const replacedMessage = message.replace(pourquoiRegex, 'pourquoi').toLocaleLowerCase();
   const responsesPourquoi = [
@@ -70,7 +74,7 @@ export const checkForPourquoi = (client, channel, message, tags) => {
  * @param {string} message le message que l'utilisateur envoie
  * @param {Object} tags les données de l'utilisateur qui a envoyé le message
  */
-export const checkForQuoi = (client, channel, message, tags) => {
+export const checkForQuoi = (client: any, channel: string, message: string, tags: Tags) => {
   const quoiRegex = /\bqu?o+i+\b/g;
   const replacedMessage = message.replace(quoiRegex, 'quoi').toLocaleLowerCase();
   const responsesQuoi = ['FEUR !!!!!', "Feur (coiffeur tu l'as ou pas ^^ ?)"];
@@ -89,11 +93,12 @@ export const checkForQuoi = (client, channel, message, tags) => {
 /**
  * Regarde si un utilisateur a fini sa phrase par qui et n'a pas de cooldown puis répond en conséquence
  * @param {Object} client Le client
- * @param {Object} channel Le channel
+ * @param {string} channel Le channel
  * @param {string} message Le message que la personne envoie
- * @param {Object} tags Les données de la personne qui a envoyé le message
+ * @param {Tags} tags Les données de la personne qui a envoyé le message
+ * @returns {void}
  */
-export const checkForQui = (client, channel, message, tags) => {
+export const checkForQui = (client: any, channel: string, message: string, tags: Tags): void => {
   const quiRegex = /\bqu?i+\b/g;
   const replacedMessage = message.replace(quiRegex, 'qui').toLocaleLowerCase();
   const responsesQui = [

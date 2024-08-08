@@ -10,7 +10,7 @@ import {
   deleteEmptyWords,
   getCooldownTime,
   resetCooldowns,
-} from '../../functions/whoWhyWhat.js';
+} from '../../src/functions/whoWhyWhat';
 
 // Mock de la fonction randomInt pour contrôler les réponses aléatoires
 jest.mock('crypto', () => ({
@@ -51,10 +51,14 @@ describe('whoWhyWhat function', () => {
     });
 
     test('should return false if cooldown has expired', () => {
-      const userId = 3;
+      const userId = '3';
       checkCooldown(userId);
-      jest.spyOn(Date, 'now').mockImplementation(() => new Date().getTime() + COOLDOWN_TIME + 1);
+      const originalDate = Date;
+      const mockDate = new Date(originalDate.now() + COOLDOWN_TIME + 1);
+      global.Date = jest.fn(() => mockDate);
+      global.Date.now = jest.fn(() => mockDate.getTime());
       expect(checkCooldown(userId)).toBe(false);
+      global.Date = originalDate;
     });
   });
 

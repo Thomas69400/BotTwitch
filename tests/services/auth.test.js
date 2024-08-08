@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Import Services
-import { getLive, getOauthToken } from '../../services/auth.js';
+import { getLive, getOauthToken } from '../../src/services/auth';
 
 jest.mock('axios');
 

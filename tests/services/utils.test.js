@@ -2,11 +2,11 @@
 import axios from 'axios';
 
 // Import Services
-import { getOauthToken } from '../../services/auth.js';
-import { getUser } from '../../services/utils.js';
+import { getOauthToken } from '../../src/services/auth';
+import { getUser } from '../../src/services/utils';
 
 jest.mock('axios');
-jest.mock('../../services/auth.js');
+jest.mock('../../src/services/auth');
 
 describe('getUser', () => {
   let originalLog;
