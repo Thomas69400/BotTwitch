@@ -181,12 +181,9 @@ export const classement = (client: any): void => {
  * @returns {void} envoie un message dans le chat mais la fonction en elle meme ne renvoie rien
  */
 export const tellPoints = (client: any, tags: Tags, message: string): void => {
-  const username = clearMessage((message || '').replace('!points', '').trim());
+  const username = clearMessage(message.replace('!points', '').trim());
   let reply = '';
-  console.log(username);
-
   if (typeof username === 'string' && username.length > 0) {
-    // Chercher les points de l'utilisateur spécifié
     const viewerId = getIdViewerByName(username);
     if (viewerId) {
       const askingViewer: Viewer = getViewer(viewerId);
@@ -199,7 +196,6 @@ export const tellPoints = (client: any, tags: Tags, message: string): void => {
       reply = `Je n'ai pas trouvé de points pour l'utilisateur ${username}.`;
     }
   } else {
-    // Chercher les points de l'utilisateur demandeur
     const askingViewer: Viewer = getViewer(tags['user-id']);
     if (askingViewer) {
       reply = `Tu as ${askingViewer.points} ${process.env.POINT_NAME} !`;
@@ -207,7 +203,6 @@ export const tellPoints = (client: any, tags: Tags, message: string): void => {
       reply = "Je n'ai pas trouvé tes points.";
     }
   }
-
   client.reply(process.env.CHANNEL, reply, tags.id);
 };
 

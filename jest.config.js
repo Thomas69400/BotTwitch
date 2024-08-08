@@ -1,5 +1,6 @@
 export default {
   preset: 'ts-jest',
+  verbose: true,
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.[jt]s?(x)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],

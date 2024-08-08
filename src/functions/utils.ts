@@ -50,15 +50,17 @@ export const toBoolean = (value: string | number): boolean => {
  * Supprime les espaces au début de la chaîne ;
  * Remplace les espaces multiples par un seul espace
  * @param {string} message
- * @returns {string}
+ * @returns {string} le message nettoyé
  */
 export const clearMessage = (message: string): string => {
-  message = message
-    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
-    .replace(/\s+$/, '')
-    .replace(/^\s+/, '')
-    .replace(/\s+/g, ' ');
-  return message;
+  const cleanedMessage = message
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '') // Supprime les paires de substitution Unicode
+    .replace(/\s+$/, '')  // Supprime les espaces à la fin
+    .replace(/^\s+/, '')  // Supprime les espaces au début
+    .replace(/\s+/g, ' ') // Remplace les espaces multiples par un seul espace
+    .trim();              // Trim supplémentaire pour s'assurer qu'il n'y a pas d'espace en trop
+  // Retourner une chaîne vide si le message nettoyé est vide
+  return cleanedMessage || '';
 };
 
 /**
