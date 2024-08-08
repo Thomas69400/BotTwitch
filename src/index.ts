@@ -18,20 +18,17 @@ import { getOauthToken } from './services/auth';
 // Import Type
 import { Tags } from './types/types';
 
-// Initialisation
-let client: tmi.Client;
-
-(async () => {
-  const token = await getOauthToken(true);
-  if (!token) {
-    throw new Error('Failed to get OAuth token');
+async function initializeBot() {
+  const oauthToken = await getOauthToken(true);
+  if (!oauthToken) {
+    console.error('Le jeton OAuth est manquant.');
+    return; // On arrête l'initialisation du bot si le jeton OAuth est manquant
   }
-
   const client = new tmi.Client({
     options: { debug: true },
     identity: {
       username: 'LytchiBot',
-      password: token,
+      password: oauthToken,
     },
     channels: [process.env.CHANNEL as string], // on met as string pour s'assurer que c'est un string et pas undefined
   });
@@ -39,43 +36,46 @@ let client: tmi.Client;
     console.log('probleme avec le .env.CHANNEL lancement de sur la chaîne par default');
 
   client.connect().catch(console.error);
-})();
-readFile();
 
-// Regex
-const onlyLetter = /[^a-z\s]/g;
-const letterNumber = /[^a-z1-9\s]/;
-const containtBeg = /\bbeg\b/i;
-const containtRaffle = /\braffle\b/i;
-const amountRegex = /\D/g; // Tout sauf les chiffres
+  readFile();
 
-client.on('message', async (channel: string, tags: Tags, message: string, self: boolean) => {
-  // Le bot ne répond pas à lui-même
-  if (self) return;
+  // Regex
+  const onlyLetter = /[^a-z\s]/g;
+  const letterNumber = /[^a-z1-9\s]/;
+  const containtBeg = /\bbeg\b/i;
+  const containtRaffle = /\braffle\b/i;
+  const amountRegex = /\D/g; // Tout sauf les chiffres
 
-  // Si le spectateur n'est pas déjà suivi par le systeme de point, on l'ajoute
-  checkViewers(tags);
+  client.on('message', async (channel: string, tags: Tags, message: string, self: boolean) => {
+    // Le bot ne répond pas à lui-même
+    if (self) return;
 
-  // Supprime tout les caractères spéciaux
-  const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
+    // Si le spectateur n'est pas déjà suivi par le systeme de point, on l'ajoute
+    checkViewers(tags);
 
-  // Fonctions
-  if (message.startsWith('!raffle')) startRaffle(client, tags, message.replace(amountRegex, ''));
-  if (message.startsWith('!cancel')) cancelRaffle(client, tags);
-  if (message.startsWith('!join')) joinRaffle(tags);
-  if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes());
-  if (message.startsWith('!timeout'))
-    timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
+    // Supprime tout les caractères spéciaux
+    const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
 
-  // Check For
-  checkForPourquoi(client, channel, trunkMessage, tags);
-  checkForQuoi(client, channel, trunkMessage, tags);
-  checkForQui(client, channel, trunkMessage, tags);
+    // Fonctions
+    if (message.startsWith('!raffle')) startRaffle(client, tags, message.replace(amountRegex, ''));
+    if (message.startsWith('!cancel')) cancelRaffle(client, tags);
+    if (message.startsWith('!join')) joinRaffle(tags);
+    if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes());
+    if (message.startsWith('!timeout'))
+      timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
 
-  if (containtBeg.test(message) && containtRaffle.test(message)) {
-    begForRaffle(client); // @Thomas69400 c'est bon ça ? il faut bien qu'un argument ?
-  }
-});
+    // Check For
+    checkForPourquoi(client, channel, trunkMessage, tags);
+    checkForQuoi(client, channel, trunkMessage, tags);
+    checkForQui(client, channel, trunkMessage, tags);
 
-// Ajouter des points selon un interval régulié
-setInterval(activeRevenue, parseInt(process.env.TIMER_ADD_POINTS as string)); // on met as string pour s'assurer que c'est un string et pas undefined
+    if (containtBeg.test(message) && containtRaffle.test(message)) {
+      begForRaffle(client); // @Thomas69400 c'est bon ça ? il faut bien qu'un argument ?
+    }
+  });
+
+  // Ajouter des points selon un interval régulié
+  setInterval(activeRevenue, parseInt(process.env.TIMER_ADD_POINTS as string)); // on met as string pour s'assurer que c'est un string et pas undefined
+}
+
+initializeBot();
