@@ -1,6 +1,6 @@
 // Import Fonctions
 import { addPoints } from './points';
-import { checkRole, roundNumber, shuffleArray, sleep, toBoolean } from './utils';
+import { checkRole, liveAndRight, roundNumber, shuffleArray, sleep } from './utils';
 
 // Import Services
 import { getLive } from '../services/auth';
@@ -25,11 +25,7 @@ export const startRaffle = async (
   prize: string | number,
 ): Promise<void> => {
   if (raffleStatus) return; // Si un raffle est déjà en cours
-  if (toBoolean(process.env.LIVE_REQUIERED as string)) {
-    const isLive = await getLive();
-    if (!isLive?.length) return;
-  }
-  if (checkRole(tags) === 0) return;
+  if(!await liveAndRight(tags, true)) return;
 
   // on crée un nouveau raffle donc on reset les participants
   raffleStatus = true;
@@ -113,13 +109,9 @@ export const begForRaffle = async (client: any): Promise<void> => {
  */
 export const fakeRaffle = async (client: any, tags: Tags, prize: string | number) => {
   if (raffleStatus) return; // Si un raffle est déjà en cours
-  if (toBoolean(process.env.LIVE_REQUIERED as string)) {
-    const isLive = await getLive();
-    if (!isLive?.length) return;
-  }
-  if (checkRole(tags) === 0) return;
+  if(!await liveAndRight(tags, true)) return;
   const amount = typeof prize === 'string' ? parseInt(prize) : prize;
-
+  raffleStatus = true;
   client.say(
     process.env.CHANNEL,
     `Un raffle de ${amount} est en cours! Tapez !join pour rejoindre!`,
@@ -130,6 +122,7 @@ export const fakeRaffle = async (client: any, tags: Tags, prize: string | number
     process.env.CHANNEL,
     `C'était un faux raffle PRANKEX`,
   );
+  raffleStatus = false;
 };
 
 /**

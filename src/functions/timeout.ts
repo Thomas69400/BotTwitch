@@ -1,6 +1,6 @@
 // Import Fonctions
 import { getIdViewerByName, getViewer, removePoints } from './points';
-import { clearMessage, commandes } from './utils';
+import { clearMessage, commandes, handleStatusError } from './utils';
 
 // Import Services
 import { serviceTimeout } from '../services/timeout';
@@ -47,7 +47,7 @@ export const timeout = async (
     }
     const responseWhisper = await serviceWhisper(tags['user-id'], textWhisper);
     if (responseWhisper !== 204) {
-      handleTimeoutError(responseWhisper, client, channel, tags.id);
+      handleStatusError(responseWhisper, client, channel, tags.id);
     }
     return;
   }
@@ -72,7 +72,7 @@ export const timeout = async (
   const responseTimeout = await serviceTimeout(userToTimeout, time * 60, tags.username);
 
   if (responseTimeout !== 200) {
-    handleTimeoutError(responseTimeout, client, channel, tags.id);
+    handleStatusError(responseTimeout, client, channel, tags.id);
     return;
   }
 
@@ -102,17 +102,4 @@ const getRandomResponse = (
   return response;
 };
 
-/**
- * Fonction pour gérer les erreurs de timeout
- * @param {number} status le status de la requête
- * @param {Object} client le client
- * @param {Object} channel le channel
- * @param {string} replyId l'id de la personne qui reçoit la réponse
- */
-const handleTimeoutError = (status: number, client: any, channel: string, replyId: string) => {
-  if (status === 400) {
-    client.reply(channel, 'Cet utilisateur ne peut pas être timeout!', replyId);
-  } else if (status < 200 || status >= 300) {
-    client.reply(channel, "Erreur lors de la demande à l'api", replyId);
-  }
-};
+
