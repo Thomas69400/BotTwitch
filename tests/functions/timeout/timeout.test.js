@@ -1,15 +1,15 @@
-import { timeout } from '../../src/functions/timeout';
-import { getViewer, getIdViewerByName, removePoints } from '../../src/functions/points';
-import { serviceTimeout } from '../../src/services/timeout';
-import { clearMessage, commandes } from '../../src/functions/utils';
-import { getUser } from '../../src/services/utils';
-import { serviceWhisper } from '../../src/services/whisper';
+import { getIdViewerByName, getViewer, removePoints } from '../../../src/functions/points';
+import { timeout } from '../../../src/functions/timeout';
+import { clearMessage } from '../../../src/functions/utils';
+import { serviceTimeout } from '../../../src/services/timeout';
+import { getUser } from '../../../src/services/utils';
+import { serviceWhisper } from '../../../src/services/whisper';
 
-jest.mock('../../src/functions/points');
-jest.mock('../../src/services/timeout');
-jest.mock('../../src/functions/utils');
-jest.mock('../../src/services/utils');
-jest.mock('../../src/services/whisper');
+jest.mock('../../../src/functions/points');
+jest.mock('../../../src/services/timeout');
+jest.mock('../../../src/functions/utils');
+jest.mock('../../../src/services/utils');
+jest.mock('../../../src/services/whisper');
 
 const mockClient = {
   reply: jest.fn(),
