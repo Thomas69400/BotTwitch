@@ -34,7 +34,6 @@ export const serviceTimeout = async (
     const response = await axios.post(url, data, { headers });
     return response.status;
   } catch (error: any) {
-    console.error('Error dans timeout:', error);
     return error.response.data.status;
   }
 };

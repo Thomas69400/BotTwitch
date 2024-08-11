@@ -1,5 +1,6 @@
 // Import types
 import { RaffleEnjoyer, Tags } from '../types/types';
+import { getLive } from '../services/auth';
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -76,5 +77,37 @@ export const commandes = (message?: string): string => {
       return `!vip pseudo ex: !vip ${process.env.CHANNEL}`;
     default:
       return 'Commandes disponible: !timeout ; !points ; !classement'; //!vip ; !unvip
+  }
+};
+
+/**
+ * Regarde si c'est en live et si l'utilisateur a les droits
+ * @param {Tags} tags Les données de l'utilisateur de la commande
+ * @param {boolean} needPermission Si l'utilisateur a besoin d'avoir les droits necessaires pour utiliser la commande
+ * @returns {boolean} Retourne True si l'utilisateur peut utiliser la commande et False si c'est hors live ou si l'utilisateur n'a pas le droit
+ */
+export const liveAndRight = async (tags: Tags, needPermission: boolean): Promise<boolean> => {
+  if (toBoolean(process.env.LIVE_REQUIERED as string)) {
+    const isLive = await getLive();
+    if (!isLive?.length) return false;
+  }
+  if(needPermission) {
+    if (checkRole(tags) === 0) return false;
+  }
+  return true;
+}
+
+/**
+ * Fonction pour gérer les erreurs de timeout
+ * @param {number} status le status de la requête
+ * @param {Object} client le client
+ * @param {Object} channel le channel
+ * @param {string} replyId l'id de la personne qui reçoit la réponse
+ */
+export const handleStatusError = (status: number, client: any, channel: string, replyId: string) => {
+  if (status === 400) {
+    client.reply(channel, 'Impossible!', replyId);
+  } else if (status < 200 || status >= 300) {
+    client.reply(channel, "Je ne peux pas faire cela.", replyId);
   }
 };
