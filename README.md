@@ -101,18 +101,15 @@ RAFFLE_RATIO_MIN = x
 
 ## Concepts
 
-- commande pour voir les points
-- commande pour voir les points de tout le monde
-- commande pour voir les commandes 🙂 (et leurs prix)
-- commande pour voir les commandes version modo
+- Commande pour voir les commandes 🙂 (et leurs prix) UPDATE AVEC TOUTES LES COMMANDES
+- Commande pour voir les commandes version modo
 - Tous les mecs d'une couleur aléatoire qui appartient à Twitch (ex : rouge) sont timeout 60 secondes(au pif) --> perdes des points (quand y'en aura)
 - Même chose qu'au dessus avec les badges
-- Timeout des gens contre des points
 - Voler des points aux autres/Payer pour faire perdre (payer plus que la cible n'en perde)
 - Enlever/Devenir vip
 - Roulette de points (Ouverture avec une chance aléatoire de gagner pour doubler sa mise)
-- Demander au bot de lancer un raffle (avec un temps d'attente) la valeur varie entre un min et un max
-  - le bot dit rien quand il est en cooldown
+- Le bot dit rien quand il est en cooldown
+- Faire un système de duel entre les joueurs : ils peuvent parier x points et celui qui a le plus grand nombre gagne (choisi aléatoirement)
 
 ## TODO List
 
@@ -120,3 +117,11 @@ RAFFLE_RATIO_MIN = x
 2. Voir pour mongoDb
 3. Tout changer en TS
 4. Revoir les tests
+
+## DONE
+
+- Commande pour voir les points
+- Commande pour voir les points de tout le monde
+- Commande pour voir les commandes 🙂 (et leurs prix)
+- Timeout des gens contre des points
+- Demander au bot de lancer un raffle (avec un temps d'attente) la valeur varie entre un min et un max
