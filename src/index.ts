@@ -9,7 +9,7 @@ import tmi from 'tmi.js';
 
 // Import Fonctions
 import { activeRevenue, checkViewers, readFile, classement, tellPoints } from './functions/points';
-import { begForRaffle, cancelRaffle, joinRaffle, startRaffle } from './functions/raffle';
+import { begForRaffle, cancelRaffle, joinRaffle, startRaffle, fakeRaffle } from './functions/raffle';
 import { timeout } from './functions/timeout';
 import { commandes } from './functions/utils';
 import { checkForPourquoi, checkForQui, checkForQuoi } from './functions/whoWhyWhat';
@@ -58,6 +58,7 @@ async function initializeBot() {
 
     // Fonctions
     if (message.startsWith('!raffle')) startRaffle(client, tags, message.replace(amountRegex, ''));
+    if (message.startsWith('!raffIe')) fakeRaffle(client, tags, message.replace(amountRegex, ''));
     if (message.startsWith('!cancel')) cancelRaffle(client, tags);
     if (message.startsWith('!join')) joinRaffle(tags);
     if (message.startsWith('!classement')) classement(client);

@@ -105,6 +105,34 @@ export const begForRaffle = async (client: any): Promise<void> => {
 };
 
 /**
+ * Fait une fausse annonce de raffle
+ * @param {Object} client Le client
+ * @param {Object} tags Les données de l'utilisateur de la commande
+ * @param {string | number} prize Le montant à envoyer dans le chat
+ * @returns {void}
+ */
+export const fakeRaffle = async (client: any, tags: Tags, prize: string | number) => {
+  if (raffleStatus) return; // Si un raffle est déjà en cours
+  if (toBoolean(process.env.LIVE_REQUIERED as string)) {
+    const isLive = await getLive();
+    if (!isLive?.length) return;
+  }
+  if (checkRole(tags) === 0) return;
+  const amount = typeof prize === 'string' ? parseInt(prize) : prize;
+
+  client.say(
+    process.env.CHANNEL,
+    `Un raffle de ${amount} est en cours! Tapez !join pour rejoindre!`,
+  );
+  await sleep(parseInt(process.env.TIMER_FAKE_RAFFLE as string));
+
+  client.say(
+    process.env.CHANNEL,
+    `C'était un faux raffle PRANKEX`,
+  );
+};
+
+/**
  * Rejoindre un raffle en cours
  * @param {Tags} tags Les données d'un utilisateur
  * @returns {void} mais ajoute les données de l'utilisateur dans la variable global raffleParticipants
