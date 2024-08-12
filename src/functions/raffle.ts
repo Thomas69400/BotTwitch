@@ -26,28 +26,31 @@ export const startRaffle = async (
 ): Promise<void> => {
   if (raffleStatus) return; // Si un raffle est déjà en cours
   if(!await liveAndRight(tags, true)) return;
-
   // on crée un nouveau raffle donc on reset les participants
   raffleStatus = true;
-  raffleParticipants = [];
   const amount = typeof prize === 'string' ? parseInt(prize) : prize;
-
+  
   client.say(
     process.env.CHANNEL,
     `Un raffle de ${amount} est en cours! Tapez !join pour rejoindre!`,
   );
 
   await sleep(parseInt(process.env.TIMER_RAFFLE as string));
+  console.log('SLEEP DE MERDE MODS');
+  console.log(raffleParticipants);
+  
   numberRaffle++;
   // une fois le timer passé, si le raffle ne s'est pas fait cancel on le désactive
   // et on pick les gagnants
   if (!raffleStatus) return;
   raffleStatus = false;
+  
   if (raffleParticipants.length <= 0) {
     client.say(process.env.CHANNEL, `Personne n'a rejoint le raffle Smoge`);
     return;
   }
   raffleParticipants = shuffleArray(raffleParticipants);
+  
   const ratioWinner = Math.round(
     (raffleParticipants.length * parseInt(process.env.RAFFLE_WIN_RATIO as string)) / 100,
   )
@@ -60,12 +63,13 @@ export const startRaffle = async (
   const winnerNames = `${listWinner.map((winner) => {
     return winner.name;
   })}`;
-
+  
   client.say(
     process.env.CHANNEL,
     `Gagnant${listWinner.length > 1 ? 's' : ''} du raffle : ${winnerNames.replaceAll(',', ' ')}`,
   );
   addPoints(listWinner, Math.ceil(amount / ratioWinner));
+  raffleParticipants = [];
 };
 
 /**
@@ -74,7 +78,7 @@ export const startRaffle = async (
  * @returns {Promise<void>} Ne retourne rien, start une raffle
  */
 export const begForRaffle = async (client: any): Promise<void> => {
-  const value = roundNumber(
+  const prize = roundNumber(
     Math.random() *
       (Number(process.env.RANDOM_RAFFLE_MAX) - Number(process.env.RANDOM_RAFFLE_MIN)) +
       Number(process.env.RANDOM_RAFFLE_MIN),
@@ -85,17 +89,16 @@ export const begForRaffle = async (client: any): Promise<void> => {
   const liveStartedAt = new Date(isLive[0].started_at);
   const now = new Date();
   const differenceInHour = Math.round((now.getTime() - liveStartedAt.getTime()) / 1000 / 60 / 60);
-
   if ((numberRaffle / differenceInHour) * 100 < parseInt(process.env.RAFFLE_RATIO_MIN as string)) {
     startRaffle(
       client,
       {
         mod: true,
         'user-id': 'begForRaffleFunction',
-        username: '',
-        id: '',
+        username: 'begRaffle',
+        id: '1',
       },
-      value,
+      prize,
     );
   }
 };
@@ -133,6 +136,8 @@ export const fakeRaffle = async (client: any, tags: Tags, prize: string | number
 export const joinRaffle = (tags: Tags): void => {
   if (!raffleParticipants.find((user) => user.id === tags['user-id']))
     raffleParticipants.push({ id: tags['user-id'], name: tags.username });
+  console.log(raffleParticipants);
+  
 };
 
 /**
@@ -175,6 +180,17 @@ export const resetRaffleStatus = (): void => {
 export const getRaffleParticipants = (): RaffleEnjoyer[] => {
   return raffleParticipants;
 };
+
+/**
+ * Ajoute des participants au raffle
+ * @param {Array<RaffleEnjoyer>} participants Les participants à ajouter
+ */
+//TODO test de cette fonction
+export const setRaffleParticipants = (participants: Array<RaffleEnjoyer>): void => {
+  for (const participant of participants) {
+    raffleParticipants.push(participant);
+  }
+}
 
 /**
  * Retourne le status du raffle

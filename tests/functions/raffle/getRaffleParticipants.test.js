@@ -34,12 +34,9 @@ describe('Raffle Functions', () => {
     global.numberRaffle = 0;
     jest.useFakeTimers();
     jest.clearAllMocks();
-    resetRaffleParticipants();
-    resetRaffleStatus();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
     jest.useRealTimers(); // Restaurer les vrais timers après chaque test
   });
 

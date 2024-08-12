@@ -4,7 +4,7 @@ import {
   resetRaffleParticipants,
   resetRaffleStatus,
 } from '../../../src/functions/raffle';
-import { checkRole } from '../../../src/functions/utils';
+import { checkRole, liveAndRight, shuffleArray } from '../../../src/functions/utils';
 import { getLive } from '../../../src/services/auth';
 
 jest.mock('../../../src/functions/utils');
@@ -40,20 +40,17 @@ describe('Raffle Functions', () => {
     global.numberRaffle = 0;
     jest.useFakeTimers();
     jest.clearAllMocks();
-    resetRaffleParticipants();
-    resetRaffleStatus();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
     jest.useRealTimers(); // Restaurer les vrais timers après chaque test
   });
 
   describe('begForRaffle', () => {
     test('should start a raffle if conditions are met', async () => {
-      checkRole.mockReturnValue(1);
       getLive.mockReturnValue([{ started_at: '2023-08-04T19:51:56.773Z' }]);
-
+      liveAndRight.mockReturnValue(true);
+      shuffleArray.mockImplementation((array) => array);
       await begForRaffle(client);
 
       joinRaffle({ 'user-id': '1', username: 'User1' });

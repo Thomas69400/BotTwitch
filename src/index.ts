@@ -17,7 +17,7 @@ import { getOauthToken } from './services/auth';
 
 // Import Type
 import { Tags } from './types/types';
-import { makeVip } from './functions/vip';
+import { vip } from './functions/vip';
 
 async function initializeBot() {
   const oauthToken = await getOauthToken(true);
@@ -64,7 +64,7 @@ async function initializeBot() {
     if (message.startsWith('!join')) joinRaffle(tags);
     if (message.startsWith('!classement')) classement(client);
     if (message.startsWith('!points')) tellPoints(client, tags, message.toLocaleLowerCase());
-    if (message.startsWith('!vip')) makeVip(client, channel, tags, message.toLocaleLowerCase());
+    if (message.startsWith('!vip') || message.startsWith('!unvip')) vip(client, channel, tags, message.toLocaleLowerCase());
     if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes());
     if (message.startsWith('!timeout'))
       timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));

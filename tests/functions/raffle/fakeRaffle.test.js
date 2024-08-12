@@ -3,8 +3,7 @@ import {
   resetRaffleStatus,
   fakeRaffle,
 } from '../../../src/functions/raffle';
-import { checkRole, sleep, toBoolean } from '../../../src/functions/utils';
-import { getLive } from '../../../src/services/auth';
+import { sleep, liveAndRight } from '../../../src/functions/utils';
 
 jest.mock('../../../src/functions/utils');
 jest.mock('../../../src/functions/points');
@@ -39,12 +38,9 @@ describe('fakeRaffle', () => {
     global.numberRaffle = 0;
     jest.useFakeTimers();
     jest.clearAllMocks();
-    resetRaffleParticipants();
-    resetRaffleStatus();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
     jest.useRealTimers(); // Restaurer les vrais timers après chaque test
   });
 
@@ -52,6 +48,7 @@ describe('fakeRaffle', () => {
 
   test('should not start a raffle if one is already in progress', async () => {
     resetRaffleStatus();
+    liveAndRight.mockReturnValue(true);
     await fakeRaffle(client, { mod: true }, 100);
 
     await fakeRaffle(client, { mod: true }, 100);
@@ -59,24 +56,21 @@ describe('fakeRaffle', () => {
   });
 
   test('should not start a raffle if live is required and not live', async () => {
-    toBoolean.mockReturnValue(true);
-    getLive.mockResolvedValue([]);
+    liveAndRight.mockReturnValue(false);
 
     await fakeRaffle(client, {}, '100');
     expect(client.say).not.toHaveBeenCalled();
   });
 
   test('should not start a raffle if user role is not allowed', async () => {
-    toBoolean.mockReturnValue(false);
-    checkRole.mockReturnValue(0);
+    liveAndRight.mockReturnValue(false);
 
     await fakeRaffle(client, {}, '100');
     expect(client.say).not.toHaveBeenCalled();
   });
 
   test('should start a raffle and announce it was a fake', async () => {
-    toBoolean.mockReturnValue(false);
-    checkRole.mockReturnValue(1);
+    liveAndRight.mockReturnValue(true);
     sleep.mockResolvedValue();
     const client = { say: jest.fn() };
 

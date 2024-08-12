@@ -24,6 +24,6 @@ export const getUser = async (name: string): Promise<User[] | undefined> => {
     const response = await axios.get(url, { headers });
     return response.data.data;
   } catch (error) {
-    console.error('Error dans timeout:', error);
+    console.error('Error getUser:', error);
   }
 };

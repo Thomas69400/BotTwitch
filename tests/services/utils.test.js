@@ -67,6 +67,6 @@ describe('getUser', () => {
       },
     });
     expect(user).toBeUndefined();
-    expect(console.error).toHaveBeenCalledWith('Error dans timeout:', mockError);
+    expect(console.error).toHaveBeenCalledWith('Error getUser:', mockError);
   });
 });

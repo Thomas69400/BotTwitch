@@ -70,7 +70,7 @@ export const timeout = async (
     }
   }
   const responseTimeout = await serviceTimeout(userToTimeout, time * 60, tags.username);
-
+  
   if (responseTimeout !== 200) {
     handleStatusError(responseTimeout, client, channel, tags.id);
     return;

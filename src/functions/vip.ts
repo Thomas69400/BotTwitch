@@ -3,7 +3,7 @@ import { Tags } from '../types/types';
 import { User } from '../types/service.types';
 
 // Import Services
-import { serviceMakeVip, serviceRemoveVip } from '../services/vip';
+import { serviceVip } from '../services/vip';
 import { getUser } from '../services/utils';
 
 // Import Functions
@@ -17,15 +17,27 @@ import { getViewer, getIdViewerByName, removePoints } from './points';
  * @param {string} message Le message de l'utilisateur (contient éventuellement le nom d'un viewer)
  * @return {void} Reply dans le chat
  */
-export const makeVip = async (client: any, channel: string, tags: Tags, message: string) => {
+export const vip = async (client: any, channel: string, tags: Tags, message: string) => {
+    const unvipRegex = /!unvip/;
     if(!await liveAndRight(tags, false)) return;
     const viewer = getViewer(tags['user-id']);
         if(viewer.points < Number(process.env.VIP_BASE_COST)) {
         client.reply(channel, `Tu n'as pas les ${process.env.POINT_NAME} nécessaires ! (coute ${process.env.VIP_BASE_COST} ${process.env.POINT_NAME})`,tags.id);
             return;
     }
-    const name = clearMessage(message.replace('!vip', ""));
-
+    let name;
+    let vipOrUnvip;
+    let replyMessage;
+    if(unvipRegex.test(message)){
+        vipOrUnvip = false;
+        name = clearMessage(message.replace('!unvip', ""));
+        replyMessage = `${name} n'est plus V.I.P le gros loser !`;
+    }
+    else{
+        vipOrUnvip = true;
+        name = clearMessage(message.replace('!vip', ""));
+        replyMessage = `${name} est devenu un membre V.I.P !`;
+    }
     let idToVip: number;
     const isViewerHere = getIdViewerByName(name);
     if (name.length <= 0) {
@@ -41,15 +53,12 @@ export const makeVip = async (client: any, channel: string, tags: Tags, message:
             idToVip = parseInt(user[0].id);
         }
     }
-    const responseVip = await serviceMakeVip(idToVip);
-    
+    const responseVip = await serviceVip(idToVip, vipOrUnvip);
     if (responseVip !== 204) {
         handleStatusError(responseVip, client, channel, tags.id);
         return;
     }
     const cost = parseInt(process.env.VIP_BASE_COST as string);
-    client.say(channel, `${name} est devenu un membre V.I.P !`);
+    client.say(channel, replyMessage);
     removePoints([{ id: tags['user-id'] }], cost);
 };
-
-export const removeVip = async (client: any, tags: Tags, message: string) => {};
