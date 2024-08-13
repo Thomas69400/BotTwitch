@@ -120,11 +120,12 @@ export const checkForQui = (client: any, channel: string, message: string, tags:
 };
 
 /**
- * Regarde si un utilisateur a utilisé l'emote Hello
+ * Regarde si un utilisateur a utilisé l'emote Hello et donne des points si il fait partit des x premiers
  * @param {Object} client Le client
  * @param {string} channel Le channel
  * @param {string} message Le message que la personne envoie
  * @param {Tags} tags Les données de la personne qui a envoyé le message
+ * @param {ShortViewer[]} viewersHello la référence du tableau (pas besoin de le return du coup)
  * @returns {Promise<void>} renvoie un message dans le chat et des points dans le compte du viewer
  */
 export const checkForHello = async (
@@ -143,6 +144,8 @@ export const checkForHello = async (
     !(await liveAndRight(false))
   )
     return;
+
+  console.log('test');
 
   const nomberMax = parseInt(process.env.HELLO_MAX);
   const emote = process.env.HELLO_EMOTE;
