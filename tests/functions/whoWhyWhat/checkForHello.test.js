@@ -88,10 +88,7 @@ describe('checkForHello', () => {
     const viewersHello = [{ id: '111' }, { id: '222' }];
     liveAndRight.mockReturnValue(true);
 
-    console.log('start');
-
     await checkForHello(client, channel, message, tags, viewersHello);
-    console.log('end');
 
     expect(client.reply).toHaveBeenCalledWith(
       channel,

@@ -145,8 +145,6 @@ export const checkForHello = async (
   )
     return;
 
-  console.log('test');
-
   const nomberMax = parseInt(process.env.HELLO_MAX);
   const emote = process.env.HELLO_EMOTE;
   const prize =
