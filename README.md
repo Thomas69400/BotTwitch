@@ -34,6 +34,11 @@ CODE_BOT = x
 RAFFLE_WIN_RATIO = 33
 
 POINT_NAME = x
+
+HELLO_EMOTE = monkeyLick
+HELLO_MAX = 4
+HELLO_PRIZE = 50
+HELLO_DEBUFF = 10
 ```
 
 .env.development
