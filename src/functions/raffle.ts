@@ -6,10 +6,10 @@ import { checkRole, liveAndRight, roundNumber, shuffleArray, sleep } from './uti
 import { getLive } from '../services/auth';
 
 // Import Type
-import { RaffleEnjoyer, Tags } from '../types/types';
+import { ShortViewer, Tags } from '../types/types';
 
 let raffleStatus: boolean = false;
-let raffleParticipants: RaffleEnjoyer[] = [];
+let raffleParticipants: ShortViewer[] = [];
 let numberRaffle = 0;
 
 /**
@@ -168,18 +168,18 @@ export const resetRaffleStatus = (): void => {
 /**
  * Retourne les informations des participants au raffle en cours
  * N'est utilisé que dans les fichiers test
- * @returns {RaffleEnjoyer[]} raffleParticipants
+ * @returns {ShortViewer[]} raffleParticipants
  */
-export const getRaffleParticipants = (): RaffleEnjoyer[] => {
+export const getRaffleParticipants = (): ShortViewer[] => {
   return raffleParticipants;
 };
 
 /**
  * Ajoute des participants au raffle
- * @param {Array<RaffleEnjoyer>} participants Les participants à ajouter
+ * @param {Array<ShortViewer>} participants Les participants à ajouter
  */
 //TODO test de cette fonction
-export const setRaffleParticipants = (participants: Array<RaffleEnjoyer>): void => {
+export const setRaffleParticipants = (participants: Array<ShortViewer>): void => {
   for (const participant of participants) {
     raffleParticipants.push(participant);
   }

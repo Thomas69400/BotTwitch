@@ -2,7 +2,9 @@
 import { randomInt } from 'crypto';
 
 // Import Type
-import { CooldownUser, Tags } from '../types/types';
+import { CooldownUser, ShortViewer, Tags } from '../types/types';
+import { addPoints } from './points';
+import { liveAndRight } from './utils';
 
 let userCooldowns: CooldownUser = {}; // Objet pour stocker le temps de cooldown pour les utilisateurs
 const COOLDOWN_TIME = 600000; // 5 minutes en millisecondes
@@ -113,6 +115,54 @@ export const checkForQui = (client: any, channel: string, message: string, tags:
       if (!checkCooldown(tags['user-id'])) {
         client.reply(channel, responsesQui[randomInt(responsesQui.length)], tags.id);
       }
+    }
+  }
+};
+
+/**
+ * Regarde si un utilisateur a utilisé l'emote Hello
+ * @param {Object} client Le client
+ * @param {string} channel Le channel
+ * @param {string} message Le message que la personne envoie
+ * @param {Tags} tags Les données de la personne qui a envoyé le message
+ * @returns {Promise<void>} renvoie un message dans le chat et des points dans le compte du viewer
+ */
+export const checkForHello = async (
+  client: any,
+  channel: string,
+  message: string,
+  tags: Tags,
+  viewersHello: ShortViewer[],
+): Promise<void> => {
+  // On s'assure qu'on a toutes les variables
+  if (
+    !process.env.HELLO_EMOTE ||
+    !process.env.HELLO_MAX ||
+    !process.env.HELLO_PRIZE ||
+    !process.env.HELLO_DEBUFF ||
+    !(await liveAndRight(false))
+  )
+    return;
+
+  const nomberMax = parseInt(process.env.HELLO_MAX);
+  const emote = process.env.HELLO_EMOTE;
+  const prize =
+    parseInt(process.env.HELLO_PRIZE) - viewersHello.length * parseInt(process.env.HELLO_DEBUFF);
+  if (viewersHello.length === nomberMax) return;
+
+  const quiRegex = new RegExp(`${emote}`, 'g');
+
+  if (quiRegex.test(message)) {
+    if (!viewersHello.find((viewer) => viewer.id === tags['user-id'])) {
+      client.reply(
+        channel,
+        `${tags.username} est le ${viewersHello.length + 1}${
+          viewersHello.length === 0 ? 'er' : 'ième'
+        } à avoir ${emote} et gagne ${prize} ${process.env.POINT_NAME}.`,
+        tags.id,
+      );
+      addPoints([{ id: tags['user-id'] }], prize);
+      viewersHello.push({ id: tags['user-id'], name: tags.username });
     }
   }
 };

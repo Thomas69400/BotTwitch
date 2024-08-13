@@ -39,7 +39,7 @@ export type CooldownUser = {
   [id: string]: Date;
 };
 
-export interface RaffleEnjoyer {
+export interface ShortViewer {
   id: string;
   name: string;
 }

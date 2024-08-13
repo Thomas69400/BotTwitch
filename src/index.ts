@@ -8,18 +8,26 @@ dotenv.config({ path: process.env.CONFIG_PATH });
 import tmi from 'tmi.js';
 
 // Import Fonctions
-import { activeRevenue, checkViewers, readFile, classement, tellPoints } from './functions/points';
-import { begForRaffle, cancelRaffle, joinRaffle, startRaffle, fakeRaffle } from './functions/raffle';
+import { activeRevenue, checkViewers, classement, readFile, tellPoints } from './functions/points';
+import {
+  begForRaffle,
+  cancelRaffle,
+  fakeRaffle,
+  joinRaffle,
+  startRaffle,
+} from './functions/raffle';
 import { timeout } from './functions/timeout';
 import { commandes } from './functions/utils';
-import { checkForPourquoi, checkForQui, checkForQuoi } from './functions/whoWhyWhat';
+import { checkForHello, checkForPourquoi, checkForQui, checkForQuoi } from './functions/whoWhyWhat';
 import { getOauthToken } from './services/auth';
 
 // Import Type
-import { Tags } from './types/types';
 import { vip } from './functions/vip';
+import { ShortViewer, Tags } from './types/types';
 
 async function initializeBot() {
+  const viewersHello: ShortViewer[] = [];
+
   const oauthToken = await getOauthToken(true);
   if (!oauthToken) {
     console.error('Le jeton OAuth est manquant.');
@@ -64,12 +72,14 @@ async function initializeBot() {
     if (message.startsWith('!join')) joinRaffle(tags);
     if (message.startsWith('!classement')) classement(client);
     if (message.startsWith('!points')) tellPoints(client, tags, message.toLocaleLowerCase());
-    if (message.startsWith('!vip') || message.startsWith('!unvip')) vip(client, channel, tags, message.toLocaleLowerCase());
+    if (message.startsWith('!vip') || message.startsWith('!unvip'))
+      vip(client, channel, tags, message.toLocaleLowerCase());
     if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes());
     if (message.startsWith('!timeout'))
       timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
 
     // Check For
+    checkForHello(client, channel, message, tags, viewersHello);
     checkForPourquoi(client, channel, trunkMessage, tags);
     checkForQuoi(client, channel, trunkMessage, tags);
     checkForQui(client, channel, trunkMessage, tags);

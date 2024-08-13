@@ -172,8 +172,9 @@ export const classement = (client: any): void => {
   let firstTenViewers = '';
   for (let i = 0; i < arrayViewers.length && i < 10; i++) {
     const viewer = arrayViewers[i];
-    firstTenViewers += `#${i + 1} ${viewer.name} ${viewer.points} ${process.env.POINT_NAME}
-     ${i === viewersInTop ? '' : ' ; '} `;
+    firstTenViewers += `#${i + 1} ${viewer.name} ${viewer.points} ${process.env.POINT_NAME}${
+      i === viewersInTop ? '' : ' ; '
+    }`;
   }
   client.say(process.env.CHANNEL, firstTenViewers.trim());
 };

@@ -1,16 +1,16 @@
 // Import types
 import { getLive } from '../services/auth';
-import { RaffleEnjoyer, Tags } from '../types/types';
+import { ShortViewer, Tags } from '../types/types';
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Retourne un tableau mélangé dans le désordre total
- * @param {RaffleEnjoyer[]} array Tableau à mélanger
- * @returns {RaffleEnjoyer[]} : le tableau mélangé
+ * @param {ShortViewer[]} array Tableau à mélanger
+ * @returns {ShortViewer[]} : le tableau mélangé
  */
-export const shuffleArray = (array: RaffleEnjoyer[]): RaffleEnjoyer[] => {
+export const shuffleArray = (array: ShortViewer[]): ShortViewer[] => {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     let temp = array[i];
