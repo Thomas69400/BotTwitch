@@ -1,11 +1,8 @@
 // Import Package
 import fs from 'fs';
 
-// Import Services
-import { getLive } from '../services/auth';
-
 // Import Fonctions
-import { toBoolean, clearMessage } from './utils';
+import { clearMessage, liveAndRight } from './utils';
 
 // Import Types
 import { Tags, Viewer, Viewers } from '../types/types';
@@ -73,7 +70,8 @@ export const checkViewers = (tags: Tags): void => {
  * @returns {Promise<void>}
  */
 export const activeRevenue = async (): Promise<void> => {
-  if (toBoolean(process.env.LIVE_REQUIERED as string)) if (await getLive()) return;
+  if (!(await liveAndRight(false))) return;
+
   const now = new Date();
   const activeViewers: Viewer[] = [];
 
@@ -88,7 +86,7 @@ export const activeRevenue = async (): Promise<void> => {
       activeViewers.push(viewer);
     }
   });
-  addPoints(activeViewers, 10);
+  if (activeViewers.length > 0) addPoints(activeViewers, 10);
 };
 
 /**
@@ -158,19 +156,26 @@ export const savePoints = (): void => {
 /**
  * Classe les viewers par points et les affiches dans le chat
  * @param {any} client le client
- * @returns {void}
+ * @returns {void} renvoie un message dans le chat
  */
 export const classement = (client: any): void => {
-  const arrayViewers = Object.values(viewers); // Convertir l'objet en un tableau de valeurs
+  // Convertir l'objet en un tableau de valeurs et supprime les bots (lytchi en a 2 (le compte et l'application))
+  const arrayViewers = Object.values(viewers).filter((viewer) => {
+    if (viewer.name !== 'Unknown' && viewer.name !== 'lytchibot' && viewer.name !== 'nightbot')
+      return viewer;
+  });
+
+  const viewersInTop = Math.min(9, arrayViewers.length - 1);
+
   arrayViewers.sort((a, b) => b.points - a.points); // Trier le tableau en ordre décroissant de points
-  let getFirstTenViewers = '';
-  for (let index = 0; index < arrayViewers.length && index < 10; index++) {
-    const element = arrayViewers[index];
-    getFirstTenViewers += `#${index + 1} ${element.name} ${element.points} ${
-      process.env.POINT_NAME
-    } ${index < arrayViewers.length - 1 ? ';' : ''} `;
+
+  let firstTenViewers = '';
+  for (let i = 0; i < arrayViewers.length && i < 10; i++) {
+    const viewer = arrayViewers[i];
+    firstTenViewers += `#${i + 1} ${viewer.name} ${viewer.points} ${process.env.POINT_NAME}
+     ${i === viewersInTop ? '' : ' ; '} `;
   }
-  client.say(process.env.CHANNEL, getFirstTenViewers.trim());
+  client.say(process.env.CHANNEL, firstTenViewers.trim());
 };
 
 /**

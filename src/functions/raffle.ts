@@ -25,32 +25,30 @@ export const startRaffle = async (
   prize: string | number,
 ): Promise<void> => {
   if (raffleStatus) return; // Si un raffle est déjà en cours
-  if(!await liveAndRight(tags, true)) return;
+  if (!(await liveAndRight(true, tags))) return;
   // on crée un nouveau raffle donc on reset les participants
   raffleStatus = true;
   const amount = typeof prize === 'string' ? parseInt(prize) : prize;
-  
+
   client.say(
     process.env.CHANNEL,
     `Un raffle de ${amount} est en cours! Tapez !join pour rejoindre!`,
   );
 
   await sleep(parseInt(process.env.TIMER_RAFFLE as string));
-  console.log('SLEEP DE MERDE MODS');
-  console.log(raffleParticipants);
-  
+
   numberRaffle++;
   // une fois le timer passé, si le raffle ne s'est pas fait cancel on le désactive
   // et on pick les gagnants
   if (!raffleStatus) return;
   raffleStatus = false;
-  
+
   if (raffleParticipants.length <= 0) {
     client.say(process.env.CHANNEL, `Personne n'a rejoint le raffle Smoge`);
     return;
   }
   raffleParticipants = shuffleArray(raffleParticipants);
-  
+
   const ratioWinner = Math.round(
     (raffleParticipants.length * parseInt(process.env.RAFFLE_WIN_RATIO as string)) / 100,
   )
@@ -63,7 +61,7 @@ export const startRaffle = async (
   const winnerNames = `${listWinner.map((winner) => {
     return winner.name;
   })}`;
-  
+
   client.say(
     process.env.CHANNEL,
     `Gagnant${listWinner.length > 1 ? 's' : ''} du raffle : ${winnerNames.replaceAll(',', ' ')}`,
@@ -112,7 +110,7 @@ export const begForRaffle = async (client: any): Promise<void> => {
  */
 export const fakeRaffle = async (client: any, tags: Tags, prize: string | number) => {
   if (raffleStatus) return; // Si un raffle est déjà en cours
-  if(!await liveAndRight(tags, true)) return;
+  if (!(await liveAndRight(true, tags))) return;
   const amount = typeof prize === 'string' ? parseInt(prize) : prize;
   raffleStatus = true;
   client.say(
@@ -121,10 +119,7 @@ export const fakeRaffle = async (client: any, tags: Tags, prize: string | number
   );
   await sleep(parseInt(process.env.TIMER_FAKE_RAFFLE as string));
 
-  client.say(
-    process.env.CHANNEL,
-    `C'était un faux raffle PRANKEX`,
-  );
+  client.say(process.env.CHANNEL, `C'était un faux raffle PRANKEX`);
   raffleStatus = false;
 };
 
@@ -136,8 +131,6 @@ export const fakeRaffle = async (client: any, tags: Tags, prize: string | number
 export const joinRaffle = (tags: Tags): void => {
   if (!raffleParticipants.find((user) => user.id === tags['user-id']))
     raffleParticipants.push({ id: tags['user-id'], name: tags.username });
-  console.log(raffleParticipants);
-  
 };
 
 /**
@@ -190,7 +183,7 @@ export const setRaffleParticipants = (participants: Array<RaffleEnjoyer>): void 
   for (const participant of participants) {
     raffleParticipants.push(participant);
   }
-}
+};
 
 /**
  * Retourne le status du raffle

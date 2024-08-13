@@ -1,6 +1,6 @@
 // Import types
-import { RaffleEnjoyer, Tags } from '../types/types';
 import { getLive } from '../services/auth';
+import { RaffleEnjoyer, Tags } from '../types/types';
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -56,10 +56,10 @@ export const toBoolean = (value: string | number): boolean => {
 export const clearMessage = (message: string): string => {
   const cleanedMessage = message
     .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '') // Supprime les paires de substitution Unicode
-    .replace(/\s+$/, '')  // Supprime les espaces à la fin
-    .replace(/^\s+/, '')  // Supprime les espaces au début
+    .replace(/\s+$/, '') // Supprime les espaces à la fin
+    .replace(/^\s+/, '') // Supprime les espaces au début
     .replace(/\s+/g, ' ') // Remplace les espaces multiples par un seul espace
-    .trim();              // Trim supplémentaire pour s'assurer qu'il n'y a pas d'espace en trop
+    .trim(); // Trim supplémentaire pour s'assurer qu'il n'y a pas d'espace en trop
   // Retourner une chaîne vide si le message nettoyé est vide
   return cleanedMessage || '';
 };
@@ -82,20 +82,20 @@ export const commandes = (message?: string): string => {
 
 /**
  * Regarde si c'est en live et si l'utilisateur a les droits
- * @param {Tags} tags Les données de l'utilisateur de la commande
  * @param {boolean} needPermission Si l'utilisateur a besoin d'avoir les droits necessaires pour utiliser la commande
+ * @param {Tags} [tags] Les données de l'utilisateur de la commande
  * @returns {boolean} Retourne True si l'utilisateur peut utiliser la commande et False si c'est hors live ou si l'utilisateur n'a pas le droit
  */
-export const liveAndRight = async (tags: Tags, needPermission: boolean): Promise<boolean> => {
+export const liveAndRight = async (needPermission: boolean, tags?: Tags): Promise<boolean> => {
   if (toBoolean(process.env.LIVE_REQUIERED as string)) {
     const isLive = await getLive();
     if (!isLive?.length) return false;
   }
-  if(needPermission) {
+  if (needPermission && tags) {
     if (checkRole(tags) === 0) return false;
   }
   return true;
-}
+};
 
 /**
  * Fonction pour gérer les erreurs de timeout
@@ -104,10 +104,15 @@ export const liveAndRight = async (tags: Tags, needPermission: boolean): Promise
  * @param {Object} channel le channel
  * @param {string} replyId l'id de la personne qui reçoit la réponse
  */
-export const handleStatusError = (status: number, client: any, channel: string, replyId: string) => {
+export const handleStatusError = (
+  status: number,
+  client: any,
+  channel: string,
+  replyId: string,
+) => {
   if (status === 400) {
     client.reply(channel, 'Impossible!', replyId);
   } else if (status < 200 || status >= 300) {
-    client.reply(channel, "Je ne peux pas faire cela.", replyId);
+    client.reply(channel, 'Je ne peux pas faire cela.', replyId);
   }
 };
