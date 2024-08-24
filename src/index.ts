@@ -20,10 +20,12 @@ import { timeout } from './functions/timeout';
 import { commandes } from './functions/utils';
 import { checkForHello, checkForPourquoi, checkForQui, checkForQuoi } from './functions/whoWhyWhat';
 import { getOauthToken } from './services/auth';
+import { duel } from './functions/duel';
 
 // Import Type
 import { vip } from './functions/vip';
 import { ShortViewer, Tags } from './types/types';
+
 
 async function initializeBot() {
   const viewersHello: ShortViewer[] = [];
@@ -77,7 +79,7 @@ async function initializeBot() {
     if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes());
     if (message.startsWith('!timeout'))
       timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
-
+    if (message.startsWith('!duel')) duel(client, tags);
     // Check For
     checkForHello(client, channel, message, tags, viewersHello);
     checkForPourquoi(client, channel, trunkMessage, tags);
