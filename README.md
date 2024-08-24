@@ -56,6 +56,8 @@ RANDOM_RAFFLE_MIN = x
 RANDOM_RAFFLE_MAX = x
 VIP_BASE_COST = x
 RAFFLE_RATIO_MIN = x
+
+DUEL = x
 ```
 
 .env.production
@@ -74,6 +76,8 @@ RANDOM_RAFFLE_MIN = x
 RANDOM_RAFFLE_MAX = x
 VIP_BASE_COST = x
 RAFFLE_RATIO_MIN = x
+
+DUEL = x
 ```
 
 .env.test
@@ -89,6 +93,8 @@ RANDOM_RAFFLE_MIN = x
 RANDOM_RAFFLE_MAX = x
 VIP_BASE_COST = x
 RAFFLE_RATIO_MIN = x
+
+DUEL = x
 ```
 
 3. Créer les fichiers "points.json", "points.dev.json" et "points.test.json" avec les données suivantes :
