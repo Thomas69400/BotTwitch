@@ -47,17 +47,21 @@ HELLO_DEBUFF = 10
 LIVE_REQUIERED = false
 POINTS_JSON = points.dev.json
 
+TIMER_ADD_POINTS = x
+
 TIMER_RAFFLE = x
 TIMER_FAKE_RAFFLE = x
-
-TIMER_ADD_POINTS = x
-TIMEOUT_BASE_COST = x
+RAFFLE_RATIO_MIN = x
 RANDOM_RAFFLE_MIN = x
 RANDOM_RAFFLE_MAX = x
+
+TIMEOUT_BASE_COST = x
+
 VIP_BASE_COST = x
-RAFFLE_RATIO_MIN = x
 
 DUEL = x
+
+ROULETTE_RATIO = x
 ```
 
 .env.production
@@ -66,18 +70,21 @@ DUEL = x
 LIVE_REQUIERED = true
 POINTS_JSON = points.json
 
-TIMER_RAFFLE = x
-TIMER_FAKE_RAFFLE = x
-
 TIMER_ADD_POINTS = x
 
-TIMEOUT_BASE_COST = x
+TIMER_RAFFLE = x
+TIMER_FAKE_RAFFLE = x
 RANDOM_RAFFLE_MIN = x
 RANDOM_RAFFLE_MAX = x
-VIP_BASE_COST = x
 RAFFLE_RATIO_MIN = x
 
+TIMEOUT_BASE_COST = x
+
+VIP_BASE_COST = x
+
 DUEL = x
+
+ROULETTE_RATIO = x
 ```
 
 .env.test
@@ -88,13 +95,15 @@ POINTS_JSON = points.test.json
 
 TIMER_RAFFLE = x
 TIMER_FAKE_RAFFLE = x
-
 RANDOM_RAFFLE_MIN = x
 RANDOM_RAFFLE_MAX = x
-VIP_BASE_COST = x
 RAFFLE_RATIO_MIN = x
 
+VIP_BASE_COST = x
+
 DUEL = x
+
+ROULETTE_RATIO = x
 ```
 
 3. Créer les fichiers "points.json", "points.dev.json" et "points.test.json" avec les données suivantes :
