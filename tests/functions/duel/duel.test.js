@@ -65,6 +65,6 @@ describe('duel function', () => {
     // Check if a winner is declared and points are exchanged
     expect(mockClient.say).toHaveBeenCalled();
     expect(addPoints).toHaveBeenCalledTimes(1);
-    expect(removePoints).toHaveBeenCalledTimes(1);
+    expect(removePoints).toHaveBeenCalledTimes(2);
   });
 });

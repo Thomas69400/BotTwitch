@@ -14,24 +14,21 @@ let isDuelActive: boolean = false;
  * @returns {void} affiche le nom di gagnant et échange les points entre les 2 joueurs
  */
 export const duel = (client: any, tags: Tags):void => {
+    const viewer = getViewer(tags['user-id']);
+    if(viewer.points < parseInt(process.env.DUEL as string)) {
+        client.reply(process.env.CHANNEL, `T'as pas les thunes mon grand.`, tags.id);
+        return;
+    }
     if(isDuelActive) {
-        const viewerPoints = getViewer(tags['user-id']).points;
-        if(viewerPoints < parseInt(process.env.DUEL as string)) {
-            client.reply(process.env.CHANNEL, `T'as pas les thunes mon grand.`, tags.id);
-        }
         if (!duelViewers.find((user) => user.id === tags['user-id'])) duelViewers.push({ id: tags['user-id'], name: tags.username });
+        removePoints([{id: viewer.id}], parseInt(process.env.DUEL as string));
         if (duelViewers.length != 2) return;
         const result = Math.floor(Math.random() * 10);
-        if(result <= 5) {
-            addPoints([{id: duelViewers[0].id}], parseInt(process.env.DUEL as string));
-            removePoints([{id: duelViewers[1].id}], parseInt(process.env.DUEL as string));
-            client.say(process.env.CHANNEL, `${duelViewers[0].name} a gagné le duel contre ${duelViewers[1].name} et remporte ${process.env.DUEL} ${process.env.POINT_NAME}`);
-        } 
-        else {
-            addPoints([{id: duelViewers[1].id}], parseInt(process.env.DUEL as string));
-            removePoints([{id: duelViewers[0].id}], parseInt(process.env.DUEL as string));
-            client.say(process.env.CHANNEL, `${duelViewers[1].name} a gagné le duel contre ${duelViewers[0].name} et remporte ${process.env.DUEL} ${process.env.POINT_NAME}`);
-        }
+        let winner = 0;
+        let loser = 1;
+        if(result > 5) {winner = 1; loser = 0};
+        addPoints([{id: duelViewers[winner].id}], parseInt(process.env.DUEL as string) * 2);
+        client.say(process.env.CHANNEL, `${duelViewers[winner].name} a gagné le duel contre ${duelViewers[loser].name} et remporte ${process.env.DUEL} ${process.env.POINT_NAME}`);
         isDuelActive = false;
     }
     else {
