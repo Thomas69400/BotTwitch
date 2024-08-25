@@ -23,6 +23,10 @@ describe('savePoints', () => {
     jest.restoreAllMocks();
   });
 
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
   test('should save points to the file', async () => {
     const viewers = { user1: 10, user2: 20 };
     reassignViewers(viewers);

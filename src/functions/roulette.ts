@@ -49,8 +49,6 @@ export const playRoulette = (client: any, tags: Tags, message: string) => {
         client.reply(process.env.CHANNEL, `Tu ne peux pas gamble ${amount} ${process.env.POINT_NAME}`, tags.id);
         return;
     };
-    console.log('roulette');
-    
     if(Math.random() <= parseInt(process.env.ROULETTE_RATIO as string) / 100) {
         addPoints([{id: viewer.id}], amount);
         client.say(process.env.CHANNEL, `${viewer.name} a doublé sa mise! BASED`);

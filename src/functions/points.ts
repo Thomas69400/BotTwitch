@@ -63,8 +63,6 @@ export const checkViewers = (tags: Tags): void => {
     // Mettre à jour le temps de la dernière activité
     viewers[tags['user-id']].lastActive = new Date();
   }
-  console.log('checkviewer');
-  
   savePoints();
 };
 
@@ -136,8 +134,6 @@ export const removePoints = (losers: { id: string }[], prize: string | number): 
  * @returns {void}
  */
 export const savePoints = async (): Promise<void> => {
-  console.log(new Date());
-  
   const filePath = process.env.POINTS_JSON as string;
   let releaseLock: (() => Promise<void>) | null = null;
 
