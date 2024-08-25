@@ -35,21 +35,28 @@ export const changeRouletteStatus = async (client: any, tags: Tags) => {
  */
 export const playRoulette = (client: any, tags: Tags, message: string) => {
     if(!rouletteStatus) return;
-    let amount = clearMessage(message.replaceAll("!gamble", ''));
+    message = clearMessage(message.replaceAll("!gamble", ''));
+    if(message.length <= 0) return;
     const viewer = getViewer(tags["user-id"]);
-    if(amount === "all") amount = viewer.points.toString();
-    else amount = message.replace(amountRegex, '');
-    if(amount.length <= 0) return;
-    if(parseInt(amount) <= 0) {
+    let amount = 0;
+    if(message === "all") amount = viewer.points;
+    else amount = parseInt(message.replace(amountRegex, ''));
+    if(viewer.points < amount) {
+        client.reply(process.env.CHANNEL, `Tu ne peux pas gamble ${amount} ${process.env.POINT_NAME}`, tags.id); 
+        return;
+    }
+    if(amount <= 0) {
         client.reply(process.env.CHANNEL, `Tu ne peux pas gamble ${amount} ${process.env.POINT_NAME}`, tags.id);
         return;
     };
+    console.log('roulette');
+    
     if(Math.random() <= parseInt(process.env.ROULETTE_RATIO as string) / 100) {
-        addPoints([{id: viewer.id}], parseInt(amount) * 2);
+        addPoints([{id: viewer.id}], amount);
         client.say(process.env.CHANNEL, `${viewer.name} a doublé sa mise! BASED`);
     }
     else {
-        removePoints([{id: viewer.id}], parseInt(amount));
+        removePoints([{id: viewer.id}], amount);
         client.say(process.env.CHANNEL, `${viewer.name} a perdu son gamble. Buratino`);
     }
 }

@@ -1,64 +1,78 @@
 // Import Package
 import fs from 'fs';
+import lockfile from 'proper-lockfile';
 
 // Import Fonctions
-import {
-  checkViewers,
-  getViewers,
-  reassignViewers,
-  savePoints,
-} from '../../../src/functions/points';
+import { savePoints, reassignViewers } from '../../../src/functions/points';
 
 jest.mock('fs');
-jest.mock('../../../src/functions/utils');
-jest.mock('../../../src/services/auth');
+jest.mock('lockfile');
 
-describe('Points Service', () => {
-  let originalEnv;
-
-  beforeAll(() => {
-    originalEnv = { ...process.env };
-    process.env.POINTS_JSON = 'points.test.json';
-  });
-
-  afterAll(() => {
-    process.env = originalEnv;
-  });
+describe('savePoints', () => {
+  const mockFilePath = '/path/to/file.json';
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    reassignViewers(); // Réinitialiser les viewers
+    process.env.POINTS_JSON = mockFilePath;
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+    jest.spyOn(lockfile, 'lock').mockResolvedValue(() => Promise.resolve());
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  describe('savePoints', () => {
-    test('should save viewers to JSON file', () => {
-      const tags = { 'user-id': '1', username: 'John' };
-      checkViewers(tags);
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-      savePoints();
+  test('should save points to the file', async () => {
+    const viewers = { user1: 10, user2: 20 };
+    reassignViewers(viewers);
 
-      const viewers = getViewers();
+    await savePoints();
 
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        process.env.POINTS_JSON,
-        JSON.stringify(viewers, null, 2),
-        expect.any(Function),
-      );
+    expect(lockfile.lock).toHaveBeenCalledWith(mockFilePath);
+    expect(fs.writeFileSync).toHaveBeenCalledWith(mockFilePath, JSON.stringify(viewers, null, 2));
+  });
+
+  test('should handle file saving errors', async () => {
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+      throw new Error('File error');
     });
 
-    test('should handle save error', () => {
-      fs.writeFile.mockImplementation((path, data, callback) => {
-        callback(new Error('Save Error'));
-      });
+    const viewers = { user1: 10, user2: 20 };
+    reassignViewers(viewers);
 
-      console.error = jest.fn();
+    await savePoints();
 
-      savePoints();
+    expect(console.error).toHaveBeenCalledWith(
+      'Erreur lors de la sauvegarde des points:',
+      expect.any(Error),
+    );
+  });
 
-      expect(console.error).toHaveBeenCalledWith(
-        'Erreur lors de la sauvegarde des points:',
-        new Error('Save Error'),
-      );
-    });
+  test('should release the lock', async () => {
+    const releaseLock = jest.fn().mockResolvedValue(undefined);
+    jest.spyOn(lockfile, 'lock').mockResolvedValue(releaseLock);
+
+    const viewers = { user1: 10, user2: 20 };
+    reassignViewers(viewers);
+
+    await savePoints();
+
+    expect(releaseLock).toHaveBeenCalled();
+  });
+
+  test('should handle errors while releasing the lock', async () => {
+    const releaseLock = jest.fn().mockRejectedValue(new Error('Unlock error'));
+    jest.spyOn(lockfile, 'lock').mockResolvedValue(releaseLock);
+
+    const viewers = { user1: 10, user2: 20 };
+    reassignViewers(viewers);
+
+    await savePoints();
+
+    expect(console.error).toHaveBeenCalledWith(
+      'Erreur lors de la libération du verrou:',
+      expect.any(Error),
+    );
   });
 });

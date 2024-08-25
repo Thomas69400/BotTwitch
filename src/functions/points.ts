@@ -1,5 +1,6 @@
 // Import Package
 import fs from 'fs';
+import lockfile from 'proper-lockfile';
 
 // Import Fonctions
 import { clearMessage, liveAndRight } from './utils';
@@ -62,6 +63,8 @@ export const checkViewers = (tags: Tags): void => {
     // Mettre à jour le temps de la dernière activité
     viewers[tags['user-id']].lastActive = new Date();
   }
+  console.log('checkviewer');
+  
   savePoints();
 };
 
@@ -132,11 +135,13 @@ export const removePoints = (losers: { id: string }[], prize: string | number): 
         points: -points,
         lastActive: new Date(),
       };
-    } else {
+    }
+    else {
       const oldData = viewers[loser.id];
+      const newPoints = oldData.points - points;
       viewers[loser.id] = {
         ...oldData,
-        points: oldData.points - points,
+        points: newPoints < 0 ? 0 : newPoints, // Option pour éviter les points négatifs, selon besoin
       };
     }
   });
@@ -147,10 +152,27 @@ export const removePoints = (losers: { id: string }[], prize: string | number): 
  * Sauvegarder les points dans un fichier
  * @returns {void}
  */
-export const savePoints = (): void => {
-  fs.writeFile(process.env.POINTS_JSON as string, JSON.stringify(viewers, null, 2), (err) => {
-    if (err) console.error('Erreur lors de la sauvegarde des points:', err);
-  });
+export const savePoints = async (): Promise<void> => {
+  console.log(new Date());
+  
+  const filePath = process.env.POINTS_JSON as string;
+  let releaseLock: (() => Promise<void>) | null = null;
+
+  try {
+    releaseLock = await lockfile.lock(filePath);
+    const jsonData = JSON.stringify(viewers, null, 2);
+    fs.writeFileSync(filePath, jsonData);
+  } catch (err) {
+    console.error('Erreur lors de la sauvegarde des points:', err);
+  } finally {
+    if (releaseLock) {
+      try {
+        await releaseLock();
+      } catch (unlockErr) {
+        console.error('Erreur lors de la libération du verrou:', unlockErr);
+      }
+    }
+  }
 };
 
 /**
