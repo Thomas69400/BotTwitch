@@ -1,5 +1,7 @@
 // Import Types
 import { Tags, ShortViewer } from '../types/types';
+
+//Import Functions
 import { addPoints, getViewer, removePoints } from './points';
 
 let duelViewers: Array<ShortViewer> = [];
