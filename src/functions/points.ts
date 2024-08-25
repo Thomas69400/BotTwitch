@@ -101,20 +101,12 @@ export const activeRevenue = async (): Promise<void> => {
 export const addPoints = (winners: { id: string }[], prize: string | number): void => {
   const points = Number(prize); // Convertir en Nombre
   winners.forEach((winner) => {
-    if (!viewers[winner.id]) {
-      viewers[winner.id] = {
-        id: winner.id,
-        name: 'Unknown',
-        points: points,
-        lastActive: new Date(),
-      };
-    } else {
-      const oldData = viewers[winner.id];
-      viewers[winner.id] = {
-        ...oldData,
-        points: oldData.points + points,
-      };
-    }
+  if (!viewers[winner.id]) {return;}
+    const oldData = viewers[winner.id];
+    viewers[winner.id] = {
+      ...oldData,
+      points: oldData.points + points,
+    };
   });
   savePoints();
 };
@@ -128,22 +120,13 @@ export const addPoints = (winners: { id: string }[], prize: string | number): vo
 export const removePoints = (losers: { id: string }[], prize: string | number): void => {
   const points = Number(prize); // Convertir en Nombre
   losers.forEach((loser) => {
-    if (!viewers[loser.id]) {
-      viewers[loser.id] = {
-        id: loser.id,
-        name: 'Unknown', // TODO y'a un probleme la non ?????
-        points: -points,
-        lastActive: new Date(),
-      };
-    }
-    else {
-      const oldData = viewers[loser.id];
-      const newPoints = oldData.points - points;
-      viewers[loser.id] = {
-        ...oldData,
-        points: newPoints < 0 ? 0 : newPoints, // Option pour éviter les points négatifs, selon besoin
-      };
-    }
+    if (!viewers[loser.id]) {return};
+    const oldData = viewers[loser.id];
+    const newPoints = oldData.points - points;
+    viewers[loser.id] = {
+      ...oldData,
+      points: newPoints < 0 ? 0 : newPoints, // Option pour éviter les points négatifs, selon besoin
+    };
   });
   savePoints();
 };

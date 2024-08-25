@@ -54,20 +54,4 @@ describe('Points Service', () => {
       expect(getViewers()['1'].points).toEqual(70); // Points totaux devraient être 50 + 20
     });
   });
-
-  describe('addPoints and removePoints edge cases', () => {
-    test('should handle adding points to viewers who don’t exist', () => {
-      addPoints([{ id: 'non-existent-id' }], 50);
-      const viewer = getViewers()['non-existent-id'];
-      expect(viewer).toBeDefined();
-      expect(viewer.points).toEqual(50);
-    });
-
-    test('should handle removing points to viewers who don’t exist', () => {
-      removePoints([{ id: 'non-existent-id' }], 50);
-      const viewer = getViewers()['non-existent-id'];
-      expect(viewer).toBeDefined();
-      expect(viewer.points).toEqual(-50);
-    });
-  });
 });
