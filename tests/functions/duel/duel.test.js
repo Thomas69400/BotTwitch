@@ -47,7 +47,7 @@ describe('duel function', () => {
 
     expect(mockClient.reply).toHaveBeenCalledWith(
       process.env.CHANNEL,
-      `T'as pas le thunes mon grand.`,
+      `T'as pas les thunes mon grand.`,
       mockTags.id,
     );
   });

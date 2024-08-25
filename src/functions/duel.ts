@@ -17,7 +17,7 @@ export const duel = (client: any, tags: Tags):void => {
     if(isDuelActive) {
         const viewerPoints = getViewer(tags['user-id']).points;
         if(viewerPoints < parseInt(process.env.DUEL as string)) {
-            client.reply(process.env.CHANNEL, `T'as pas le thunes mon grand.`, tags.id);
+            client.reply(process.env.CHANNEL, `T'as pas les thunes mon grand.`, tags.id);
         }
         if (!duelViewers.find((user) => user.id === tags['user-id'])) duelViewers.push({ id: tags['user-id'], name: tags.username });
         if (duelViewers.length != 2) return;
