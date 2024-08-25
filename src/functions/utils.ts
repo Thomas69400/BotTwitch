@@ -114,7 +114,7 @@ export const handleStatusError = (
   client: any,
   channel: string,
   replyId: string,
-) => {
+) => {  
   if (status === 400) {
     client.reply(channel, 'Impossible!', replyId);
   } else if (status < 200 || status >= 300) {

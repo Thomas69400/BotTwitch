@@ -32,10 +32,11 @@ export const timeout = async (
   tags: Tags,
   message: string,
 ): Promise<void> => {
+  
+  
   const isNumber = /^[1-9]\d*$/; // que des nombres
   const buyer = [getViewer(tags['user-id'])];
   let textWhisper = '';
-
   // Séparation des arguments et vérifications
   const splitMessage = clearMessage(message).split(' ');
   if (typeof splitMessage[1] != 'string' || !isNumber.test(splitMessage[2]) || splitMessage[3]) {
@@ -46,6 +47,7 @@ export const timeout = async (
         "Désolé, je n'ai pas compris la demande.\n Essayez celle-ci : !timeout pseudo durée(minutes) ex: !timeout tryllogy 1";
     }
     const responseWhisper = await serviceWhisper(tags['user-id'], textWhisper);
+    console.log("test 2");
     if (responseWhisper !== 204) {
       handleStatusError(responseWhisper, client, channel, tags.id);
     }
@@ -70,7 +72,6 @@ export const timeout = async (
     }
   }
   const responseTimeout = await serviceTimeout(userToTimeout, time * 60, tags.username);
-  
   if (responseTimeout !== 200) {
     handleStatusError(responseTimeout, client, channel, tags.id);
     return;
