@@ -101,6 +101,32 @@ RAFFLE_RATIO_MIN = x
 5. Commande `npm run dev` pour démarrer l'application via Nodemon et coder plus facilement
 6. Stopper le serveur avec Control + C
 
+- Pour lancer le bot via un script dès que vous lancez le stream :
+
+1. Créez un fichier vide nommé "launch_stream.bat" pour Windows ou "launch_stream.sh" si vous êtes sur macOS ou Linux.
+2. Téléchargez le plugin [Advanced Scene Switcher](https://github.com/WarmUpTill/SceneSwitcher/releases)
+3. Allez dans l'onglet Outils de votre OBS et sélectionnez le plugin du même nom.
+4. Créez une macro avec comme option : name:"Launch LytchiBot", "Si", "Diffusion en continu", "Démarrage de la diffusion en continu"
+   "Exécuter" puis le chemin vers votre fichier launch_stream
+5. Pour remplir votre fichier launch_stream, vous aurez besoin du chemin du fichier.
+   Copiez simplement le chemin que vous avez donné à OBS (en enlevant le launch_stream!).
+
+Pour Windows:
+
+```bat
+@echo off
+REM Ouvrir un terminal et lancer la commande npm run start
+start "" cmd /k "cd C:\Chemin\Vers\Ton\Projet && npm run start"
+```
+
+Pour Linux/Mac:
+
+```sh
+#!/bin/bash
+# Ouvrir un terminal et lancer la commande npm run start
+gnome-terminal -- bash -c "cd /Chemin/Vers/Ton/Projet && npm run start; exec bash"
+```
+
 ## Concepts
 
 - Commande pour voir les commandes 🙂 (et leurs prix) UPDATE AVEC TOUTES LES COMMANDES

@@ -6,6 +6,9 @@
 .env.development
 .env.test
 
+launch_stream.bat
+launch_stream.sh
+
 package-lock.json
 
 points.json
