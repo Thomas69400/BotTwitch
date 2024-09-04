@@ -20,10 +20,13 @@ import { timeout } from './functions/timeout';
 import { commandes } from './functions/utils';
 import { checkForHello, checkForPourquoi, checkForQui, checkForQuoi } from './functions/whoWhyWhat';
 import { getOauthToken } from './services/auth';
+import { duel } from './functions/duel';
+import { changeRouletteStatus, playRoulette } from './functions/roulette';
 
 // Import Type
 import { vip } from './functions/vip';
 import { ShortViewer, Tags } from './types/types';
+
 
 async function initializeBot() {
   const viewersHello: ShortViewer[] = [];
@@ -66,27 +69,34 @@ async function initializeBot() {
     const trunkMessage = message.toLowerCase().replace(onlyLetter, '');
 
     // Fonctions
+    if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes(message.replace('!help', '')));
+    // Raffles
     if (message.startsWith('!raffle')) startRaffle(client, tags, message.replace(amountRegex, ''));
     if (message.startsWith('!raffIe')) fakeRaffle(client, tags, message.replace(amountRegex, ''));
     if (message.startsWith('!cancel')) cancelRaffle(client, tags);
     if (message.startsWith('!join')) joinRaffle(tags);
+    if (containtBeg.test(message) && containtRaffle.test(message)) {
+      begForRaffle(client); // @Thomas69400 c'est bon ça ? il faut bien qu'un argument ?
+    }
+    // Points
     if (message.startsWith('!classement')) classement(client);
     if (message.startsWith('!points')) tellPoints(client, tags, message.toLocaleLowerCase());
+    // Vip
     if (message.startsWith('!vip') || message.startsWith('!unvip'))
       vip(client, channel, tags, message.toLocaleLowerCase());
-    if (message.startsWith('!help')) client.say(process.env.CHANNEL as string, commandes());
+    // Timeout
     if (message.startsWith('!timeout'))
       timeout(client, channel, tags, message.toLowerCase().replace(letterNumber, ''));
-
+    // Duel
+    if (message.startsWith('!duel')) duel(client, tags);
+    // Roulette
+    if (message.startsWith('!roulette')) changeRouletteStatus(client, tags);
+    if (message.startsWith('!gamble')) playRoulette(client, tags, message.toLocaleLowerCase());
     // Check For
     checkForHello(client, channel, message, tags, viewersHello);
     checkForPourquoi(client, channel, trunkMessage, tags);
     checkForQuoi(client, channel, trunkMessage, tags);
     checkForQui(client, channel, trunkMessage, tags);
-
-    if (containtBeg.test(message) && containtRaffle.test(message)) {
-      begForRaffle(client); // @Thomas69400 c'est bon ça ? il faut bien qu'un argument ?
-    }
   });
 
   // Ajouter des points selon un interval régulié

@@ -70,13 +70,18 @@ export const clearMessage = (message: string): string => {
  * @returns {string} la façon dont on utilise la commande
  */
 export const commandes = (message?: string): string => {
+  message = clearMessage(message ?  message : '');
   switch (message) {
     case 'timeout':
       return `!timeout pseudo durée(minutes) ex: !timeout ${process.env.CHANNEL} 1 --> prix : ${process.env.TIMEOUT_BASE_COST}`;
     case 'vip':
       return `!vip pseudo ex: !vip ${process.env.CHANNEL}`;
+    case 'unvip':
+      return `!unvip pseudo ex: !unvip ${process.env.CHANNEL}`;
+    case 'gamble':
+      return `!gamble montant ex: !gamble 50 ou !gamble all`;
     default:
-      return 'Commandes disponible: !timeout ; !points ; !classement'; //!vip ; !unvip
+      return 'Commandes disponible: !timeout ; !points ; !classement ; !duel ; !gamble ; !vip ; !unvip';
   }
 };
 
@@ -109,7 +114,7 @@ export const handleStatusError = (
   client: any,
   channel: string,
   replyId: string,
-) => {
+) => {  
   if (status === 400) {
     client.reply(channel, 'Impossible!', replyId);
   } else if (status < 200 || status >= 300) {

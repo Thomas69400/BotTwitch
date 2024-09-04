@@ -1,6 +1,6 @@
 import { getIdViewerByName, getViewer, removePoints } from '../../../src/functions/points';
 import { timeout } from '../../../src/functions/timeout';
-import { clearMessage } from '../../../src/functions/utils';
+import { clearMessage, handleStatusError } from '../../../src/functions/utils';
 import { serviceTimeout } from '../../../src/services/timeout';
 import { getUser } from '../../../src/services/utils';
 import { serviceWhisper } from '../../../src/services/whisper';
@@ -87,11 +87,14 @@ test('should handle timeout error correctly', async () => {
   getViewer.mockReturnValueOnce({ points: 100 });
   getIdViewerByName.mockReturnValueOnce('userToTimeoutId');
   serviceTimeout.mockReturnValueOnce(400);
+  // Simuler handleStatusError pour appeler client.reply directement
+  handleStatusError.mockImplementation((status, client, channel, tagId) => {
+    if (status === 400) {
+      client.reply(channel, 'Impossible!', tagId);
+    }
+  });
+
   await timeout(mockClient, mockChannel, mockTags, mockMessage);
 
-  expect(mockClient.reply).toHaveBeenCalledWith(
-    mockChannel,
-    'Cet utilisateur ne peut pas être timeout!',
-    'tagId',
-  );
+  expect(mockClient.reply).toHaveBeenCalledWith(mockChannel, 'Impossible!', 'tagId');
 });

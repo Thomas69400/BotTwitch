@@ -10,6 +10,8 @@ describe('commandes', () => {
       `!timeout pseudo durée(minutes) ex: !timeout ${process.env.CHANNEL} 1 --> prix : ${process.env.TIMEOUT_BASE_COST}`,
     );
     expect(commandes('vip')).toBe(`!vip pseudo ex: !vip ${process.env.CHANNEL}`);
-    expect(commandes()).toBe('Commandes disponible: !timeout ; !points ; !classement');
+    expect(commandes()).toBe(
+      'Commandes disponible: !timeout ; !points ; !classement ; !duel ; !gamble ; !vip ; !unvip',
+    );
   });
 });

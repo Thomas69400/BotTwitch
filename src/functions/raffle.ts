@@ -178,7 +178,6 @@ export const getRaffleParticipants = (): ShortViewer[] => {
  * Ajoute des participants au raffle
  * @param {Array<ShortViewer>} participants Les participants à ajouter
  */
-//TODO test de cette fonction
 export const setRaffleParticipants = (participants: Array<ShortViewer>): void => {
   for (const participant of participants) {
     raffleParticipants.push(participant);
