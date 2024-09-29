@@ -26,7 +26,7 @@ export const duel = (client: any, tags: Tags):void => {
         const result = Math.floor(Math.random() * 10);
         let winner = 0;
         let loser = 1;
-        if(result > 5) {winner = 1; loser = 0};
+        if(result >= 5) {winner = 1; loser = 0};
         addPoints([{id: duelViewers[winner].id}], parseInt(process.env.DUEL as string) * 2);
         client.say(process.env.CHANNEL, `${duelViewers[winner].name} a gagné le duel contre ${duelViewers[loser].name} et remporte ${process.env.DUEL} ${process.env.POINT_NAME}`);
         isDuelActive = false;
